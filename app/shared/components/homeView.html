@@ -1,0 +1,49 @@
+<div class="container">
+  <button ng-click="logout()" class="waves-effect grey btn-large">Logout</button>
+  <button id="loginButton" data-target="loginModal" class="waves-effect grey btn-large"> LOGIN</button>
+  <button class="registerButton waves-effect grey btn-large" data-target="registerModal"> Register</button>
+  <button id="newPost" class="waves-effect grey btn-large" data-target="postModal"> New Post</button>
+  <!-- Login Modal  -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h4>Login</h4>
+      <form>
+        <input type="email" ng-model="user_email" placeholder="Email">
+        <input type="password" ng-model="user_password" placeholder="Password">
+        <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" ng-click="userLogin()" value="LOGIN">
+      </form>
+      <p>New?
+        <button class="registerButton" data-target="registerModal" class="modal-action modal-close waves-effect waves-white btn-flat">Register</button>
+      </p>
+    </div>
+  </div>
+  <!-- End Login Modal  -->
+  <!-- Register Modal  -->
+  <div id="registerModal" class="modal">
+    <div class="modal-content">
+      <h4>Register</h4>
+      <form>
+        <input type="text" ng-model="firstName" placeholder="First">
+        <input type="text" ng-model="lastName" placeholder="Last">
+        <input type="email" ng-model="user_email" placeholder="Email">
+        <input type="password" ng-model="user_password" placeholder="Password">
+        <input type="submit" ng-click="createUser()" class="modal-action modal-close waves-effect waves-green btn-flat" value="Register">
+      </form>
+    </div>
+  </div>
+  <!-- End Register Modal  -->
+  <!-- AddSong Modal -->
+  <div id="postModal" class="modal">
+    <div class="modal-content">
+      <h4>New Post</h4>
+      <form>
+        <input type="text" ng-model="Photo" placeholder="Title">
+        <input type="text" ng-model="Title" placeholder="Artist">
+        <input type="file">
+        <input type="submit" ng-click="" class="modal-action modal-close waves-effect waves-green btn-flat" value="Save Song">
+      </form>
+    </div>
+    <!-- End new Post Modal  -->
+  </div>
+</div>
+<!-- end of container -->
