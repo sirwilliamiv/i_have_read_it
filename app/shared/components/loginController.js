@@ -1,7 +1,7 @@
 app.controller('loginCtrl', function($scope, $location) {
 
 
-// $('#loginModal').modal('open');
+$('#loginModal').modal('open');
       //login
   $('#loginModal').modal({
       dismissible: true, // Modal can be dismissed by clicking outside of the modal

@@ -1,12 +1,6 @@
 app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
 
-  $scope.newPost = () => {
-    redditFactory.newPost($scope.Photo, $scope.Title)
-      .then(() => {
-        console.log("much success")
-      })
-      .catch((error) => console.log(error))
-  }
+
 
   redditFactory.getPosts()
     .then((allPosts) => {
@@ -25,6 +19,19 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     // redditFactory.updateUpvotes();
   }
 
+
+
+    redditFactory.getPosts()
+      .then((allPosts) => {
+        $scope.all = allPosts.data
+        console.log("posts", $scope.all)
+      })
+
+
+
+  // $scope.getPosts()
+
+
   $scope.downVote = (vote, score, key) => {
     console.log('downvoted', vote, 'score', score, 'key', key);
     let newVote = parseInt(vote, 10) + 1;
@@ -34,6 +41,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     // redditFactory.updateScore();
     // redditFactory.updateDownvotes();
   }
+
 
   //Auth
   $scope.logout = () => {
@@ -68,6 +76,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   $('#newPost').click(() => {
     $('#postModal').modal('open')
   })
+
 
 
 
