@@ -28,37 +28,58 @@ app.config(($routeProvider, $locationProvider) => {
   })
   .when('/login', {
     controller:'loginCtrl'
-  });
+  })
+  .when('/register',{
+    controller:'registerCtrl'
+  })
+  .when('/post',{
+    controller:'postCtrl'
+  })
 });
 ;
 app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
 
-    $scope.newPost = () => {
+  $scope.newPost = () => {
+    redditFactory.newPost($scope.Photo, $scope.Title)
+      .then(() => {
+        console.log("much success")
+      })
+      .catch((error) => console.log(error))
+  }
 
-        redditFactory.newPost($scope.Photo, $scope.Title)
-            .then(() => {
-                console.log("much success")
-            })
-            .catch((error) => console.log(error))
-    }
+  redditFactory.getPosts()
+    .then((allPosts) => {
+      $scope.all = allPosts.data;
+      console.log("posts", $scope.all);
+    });
 
-        redditFactory.getPosts()
-            .then((allPosts) => {
-                $scope.all = allPosts.data
-                console.log("posts", $scope.all)
-            });
+  // onclick post the result to firebase
+  $scope.upVote = (vote, score, key) => {
+    console.log('upvoted', vote, 'score', score, 'key', key);
+    let newVote = parseInt(vote, 10) + 1;
+    let newScore = parseInt(score, 10) + 1;
+    console.log('upvoted', newVote, 'score', newScore, 'key', key);
+    // patch to reddit factory on key to update upvote and score
+    // redditFactory.updateScore();
+    // redditFactory.updateUpvotes();
+  }
 
-    // $scope.getPosts()
+  $scope.downVote = (vote, score, key) => {
+    console.log('downvoted', vote, 'score', score, 'key', key);
+    let newVote = parseInt(vote, 10) + 1;
+    let newScore = parseInt(score, 10) - 1;
+    console.log('downvoted', newVote, 'score', newScore, 'key', key);
+    // patch to reddit factory on key to update upvote and score
+    // redditFactory.updateScore();
+    // redditFactory.updateDownvotes();
+  }
 
+  //Auth
+  $scope.logout = () => {
+    authFactory.logout()
+      .then(() => console.log('logged out'))
+  }
 
-
-
-
-    //Auth
-    $scope.logout = () => {
-        authFactory.logout()
-            .then(() => console.log('logged out'))
-    }
 
   $scope.userLogin = () => {
 
@@ -72,63 +93,22 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   };
 
 
-    //materialize Modals below
-    $('#loginButton').click(() => {
-        $('#loginModal').modal('open')
-    })
+
+  //materialize Modals below
+  $('#loginButton').click(() => {
+    $('#loginModal').modal('open')
+  })
+
+  $('.registerButton').click(() => {
+    $('#registerModal').modal('open')
+  })
 
 
-    $('.registerButton').click(() => {
-        $('#registerModal').modal('open')
-    })
-
-    $('#newPost').click(() => {
-        $('#postModal').modal('open')
-    })
-
-    //register
-    $('#registerModal').modal({
-        dismissible: true, // Modal can be dismissed by clicking outside of the modal
-        opacity: 0.3, // Opacity of modal background
-        inDuration: 750, // Transition in duration
-        outDuration: 700, // Transition out duration
-        startingTop: '100%', // Starting top style attribute
-        endingTop: '20%', // Ending top style attribute
-        ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-
-      console.log(modal, trigger);
-    },
-    complete: function() { console.log('Closed'); } // Callback for Modal close
-  });
-  //register
-  $('#registerModal').modal({
-    dismissible: true, // Modal can be dismissed by clicking outside of the modal
-    opacity: 0.3, // Opacity of modal background
-    inDuration: 750, // Transition in duration
-    outDuration: 700, // Transition out duration
-    startingTop: '100%', // Starting top style attribute
-    endingTop: '20%', // Ending top style attribute
-    ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-
-      console.log(modal, trigger);
-    },
-    complete: function() { console.log('Closed'); } // Callback for Modal close
-  });
+  $('#newPost').click(() => {
+    $('#postModal').modal('open')
+  })
 
 
-  $('#postModal').modal({
-    dismissible: true, // Modal can be dismissed by clicking outside of the modal
-    opacity: 0.3, // Opacity of modal background
-    inDuration: 700, // Transition in duration
-    outDuration: 700, // Transition out duration
-    startingTop: '0%', // Starting top style attribute
-    endingTop: '20%', // Ending top style attribute
-    ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-
-      console.log(modal, trigger);
-    },
-    complete: function() { console.log('Closed'); } // Callback for Modal close
-  });
 
 })
 ;
@@ -151,6 +131,41 @@ app.controller('loginCtrl', function($scope, $location) {
       complete: function() { console.log('Closed'); } // Callback for Modal close
   });
 });
+;
+app.controller('postCtrl', function($scope, $location) {
+
+   $('#postModal').modal({
+        dismissible: true, // Modal can be dismissed by clicking outside of the modal
+        opacity: .3, // Opacity of modal background
+        inDuration: 700, // Transition in duration
+        outDuration: 700, // Transition out duration
+        startingTop: '0%', // Starting top style attribute
+        endingTop: '20%', // Ending top style attribute
+        ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+
+            console.log(modal, trigger);
+        },
+        complete: function() { console.log('Closed'); } // Callback for Modal close
+    });
+})
+;
+app.controller('registerCtrl', function($scope, $location) {
+
+    //register
+    $('#registerModal').modal({
+        dismissible: true, // Modal can be dismissed by clicking outside of the modal
+        opacity: .3, // Opacity of modal background
+        inDuration: 750, // Transition in duration
+        outDuration: 700, // Transition out duration
+        startingTop: '100%', // Starting top style attribute
+        endingTop: '20%', // Ending top style attribute
+        ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+
+      console.log(modal, trigger);
+    },
+    complete: function() { console.log('Closed'); } // Callback for Modal close
+  });
+})
 ;
 app.factory('authFactory', ($q) => {
   return {
@@ -207,6 +222,15 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
+    },
+    updateScore() {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    },
+    updateUpvotes() {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    },
+    updateDownvotes() {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
     }
   }
-})
+});

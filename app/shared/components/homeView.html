@@ -5,21 +5,28 @@
   <button id="newPost" class="waves-effect grey btn-large" data-target="postModal"> New Post</button>
   <br>
   <br>
+
   <!-- ng-repeat over posts -->
   <div class="row" ng-repeat="(key, value) in all">
-    <div class="col s1 center">
-      <i class="material-icons upvote">thumb_up</i>
-      <p class="upvoteRating">{{value.score}}</p>
-      <i class="material-icons downvote">thumb_down</i>
-    </div>
-    <div class="col s2">
-      <img class="postImage" ng-src="{{value.image}}">
-    </div>
-    <div class="col s8">
-      <h5>{{value.url}}</h5>
-      <p class="light">{{value.uid}}</p>
-    </div>
-  </div><!-- row -->
+
+
+    <!-- <div ng-repeat="this in value"> -->
+      <div class="col s1 center">
+        <i ng-click="upVote(value.upvotes, value.score, key)" class="material-icons upvote">thumb_up</i>
+        <p class="upvoteRating">{{value.score}}</p>
+        <i ng-click="downVote(value.downvotes, value.score, key)" class="material-icons downvote">thumb_down</i>
+      </div>
+      <div class="col s2">
+        <img class="postImage" ng-src="{{value.image}}">
+      </div>
+      <div class="col s9">
+        <a href="{{value.url}}"><h5>{{value.title}}</h5></a>
+        <p class="light">{{value.uid}}</p>
+      </div>
+    <!-- </div> -->
+  </div>
+  <!-- row -->
+
 
   <!-- Login Modal  -->
   <div id="loginModal" ng-controller="loginCtrl" class="modal">
