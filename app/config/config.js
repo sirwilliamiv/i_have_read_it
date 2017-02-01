@@ -24,5 +24,8 @@ app.config(($routeProvider, $locationProvider) => {
   })
   .when('/login', {
     controller:'loginCtrl'
-  });
+  })
+  .when('/register',{
+    controller:'registerCtrl'
+  })
 });

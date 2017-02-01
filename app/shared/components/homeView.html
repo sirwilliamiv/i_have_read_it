@@ -54,13 +54,13 @@
         <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" ng-click="userLogin()" value="LOGIN">
       </form>
       <p>New?
-        <button class="registerButton" data-target="registerModal" class="modal-action modal-close waves-effect waves-white btn-flat">Register</button>
+        <button data-target="registerModal" class="modal-action modal-close waves-effect waves-white btn-flat registerButton">Register</button>
       </p>
     </div>
   </div>
   <!-- End Login Modal  -->
   <!-- Register Modal  -->
-  <div id="registerModal" class="modal">
+  <div id="registerModal" ng-controller="registerCtrl" class="modal">
     <div class="modal-content">
       <h4>Register</h4>
       <form>
