@@ -21,10 +21,4 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
             return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
           }
     }
-    // getPlaylist() {},
-    // addSong() {},
-    // addPlaylist(){},
-    // patchSongToPlaylist(){},
-    // deleteSong() {}
-
 })
