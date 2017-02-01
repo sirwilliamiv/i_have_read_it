@@ -1,25 +1,25 @@
-app.factory('redditFactory', ($q)=> {
+app.factory('redditFactory', ($q, authFactory, $http) => {
 
- return {
-    // addSong(title,artist,album,length) {
-    //   // console.log("addsong",title,artist, album, length)
-    //   return authFactory.getUser().then(user => {
-    //     console.log("addsong",title,artist, album, length)
-    //         // $scope.title, $scope.artist, $scope.album, $scope.length
-    //     return $http.post(`https://music-history-64fd9.firebaseio.com/Songs/.json`,
-    //     {
-    //       uid:user.uid,
-    //       Title: title,
-    //       Artist: artist,
-    //       Album: album,
-    //       Length: length
-    //     })
-    //   })
-    // },
-    // getSong() {
-    //   return authFactory.getUser().then(user => {
-    //     return $http.get(`https://music-history-64fd9.firebaseio.com/Songs/.json?orderBy="uid"&equalTo="${user.uid}"`)
-    //   })
+    return {
+        newPost(url, title) {
+
+            return authFactory.getUser().then(user => {
+                console.log("addingpost")
+                    // $scope.title, $scope.artist, $scope.album, $scope.length
+                return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
+                    uid: user.uid,
+                    Title: title,
+                    Link: url,
+                    // Name: first
+                    // Upvotes:,
+                    // Downvotes:,
+                    // Image:
+                })
+            })
+        },
+        getPosts() {
+            return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
+          }
     }
     // getPlaylist() {},
     // addSong() {},
@@ -27,4 +27,4 @@ app.factory('redditFactory', ($q)=> {
     // patchSongToPlaylist(){},
     // deleteSong() {}
 
-  })
+})

@@ -32,15 +32,15 @@
     </div>
   </div>
   <!-- End Register Modal  -->
-  <!-- AddSong Modal -->
+  <!-- AddPost Modal -->
   <div id="postModal" class="modal">
     <div class="modal-content">
       <h4>New Post</h4>
-      <form>
-        <input type="text" ng-model="Photo" placeholder="Title">
-        <input type="text" ng-model="Title" placeholder="Artist">
+      <form ng-submit="newPost()">
+        <input type="text" ng-model="Photo" placeholder="PhotoUrl">
+        <input type="text" ng-model="Title" placeholder="Title">
         <input type="file">
-        <input type="submit" ng-click="newPost()" class="modal-action modal-close waves-effect waves-green btn-flat" value="Save Song">
+        <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" value="Save Song">
       </form>
     </div>
     <!-- End new Post Modal  -->
