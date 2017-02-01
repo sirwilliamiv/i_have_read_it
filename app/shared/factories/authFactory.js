@@ -20,7 +20,7 @@ app.factory('authFactory', ($q) => {
               if (user) {
                 resolve(user);
               } else {
-                reject();
+                reject('Not Logged In');
               }
 
             }); //end const unsubscribe

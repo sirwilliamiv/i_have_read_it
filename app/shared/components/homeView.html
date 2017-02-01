@@ -13,7 +13,7 @@
       <i class="material-icons downvote">thumb_down</i>
     </div>
     <div class="col s2">
-      <img class="postImage" src={{value.image}}>
+      <img class="postImage" ng-src="{{value.image}}">
     </div>
     <div class="col s8">
       <h5>{{value.url}}</h5>
@@ -55,9 +55,9 @@
     <div class="modal-content">
       <h4>New Post</h4>
       <form ng-submit="newPost()">
-        <input type="text" ng-model="Photo" placeholder="PhotoUrl">
+        <input type="text" ng-model="Link" placeholder="Link from to Web">
         <input type="text" ng-model="Title" placeholder="Title">
-        <input type="file" id="fileUpload">
+        <input ng-change="handleFiles()" ng-model="File" type="file" id="fileUpload">
         <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" value="Post">
       </form>
     </div>
