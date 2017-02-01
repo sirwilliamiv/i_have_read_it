@@ -1,6 +1,6 @@
-app.factory('redditFactory', ($q)=> {
+app.factory('redditFactory', ($q) => {
 
- return {
+  return {
     // addSong(title,artist,album,length) {
     //   // console.log("addsong",title,artist, album, length)
     //   return authFactory.getUser().then(user => {
@@ -20,11 +20,11 @@ app.factory('redditFactory', ($q)=> {
     //   return authFactory.getUser().then(user => {
     //     return $http.get(`https://music-history-64fd9.firebaseio.com/Songs/.json?orderBy="uid"&equalTo="${user.uid}"`)
     //   })
-    }
-    // getPlaylist() {},
-    // addSong() {},
-    // addPlaylist(){},
-    // patchSongToPlaylist(){},
-    // deleteSong() {}
+  };
+  // getPlaylist() {},
+  // addSong() {},
+  // addPlaylist(){},
+  // patchSongToPlaylist(){},
+  // deleteSong() {}
 
-  })
+});
