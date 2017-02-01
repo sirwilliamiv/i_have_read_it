@@ -1,10 +1,10 @@
 <div class="container">
   <button ng-click="logout()" class="waves-effect grey btn-large">Logout</button>
-  <button id="loginButton" data-target="loginModal" class="waves-effect grey btn-large"> LOGIN</button>
+  <button id="loginButton" ng-controller="loginCtrl" href="/shared/components/loginView.html" data-target="loginModal" class="waves-effect grey btn-large"> LOGIN</button>
   <button class="registerButton waves-effect grey btn-large" data-target="registerModal"> Register</button>
   <button id="newPost" class="waves-effect grey btn-large" data-target="postModal"> New Post</button>
-  <!-- Login Modal  -->
-  <div id="loginModal" class="modal">
+   <!-- Login Modal  -->
+  <div id="loginModal" ng-controller="loginCtrl" class="modal">
     <div class="modal-content">
       <h4>Login</h4>
       <form>

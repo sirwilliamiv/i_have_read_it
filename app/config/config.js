@@ -7,7 +7,7 @@ app.config(($routeProvider, $locationProvider) => {
    databaseURL: "https://reddit-steve.firebaseio.com",
    storageBucket: "reddit-steve.appspot.com",
    messagingSenderId: "386901472273"
- })
+ });
 
 
 
@@ -22,4 +22,7 @@ app.config(($routeProvider, $locationProvider) => {
       // authentication resolves from factories
     }
   })
-})
+  .when('/login', {
+    controller:'loginCtrl'
+  });
+});
