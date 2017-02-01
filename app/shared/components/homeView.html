@@ -74,14 +74,14 @@
   </div>
   <!-- End Register Modal  -->
   <!-- AddPost Modal -->
-  <div id="postModal" class="modal">
+  <div id="postModal" ng-controller="postCtrl" class="modal">
     <div class="modal-content">
       <h4>New Post</h4>
       <form ng-submit="newPost()">
         <input type="text" ng-model="Photo" placeholder="PhotoUrl">
         <input type="text" ng-model="Title" placeholder="Title">
-        <input type="file">
-        <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" value="Save Song">
+        <input type="file" id="fileUpload">
+        <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" value="Post">
       </form>
     </div>
     <!-- End new Post Modal  -->

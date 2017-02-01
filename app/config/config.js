@@ -28,4 +28,7 @@ app.config(($routeProvider, $locationProvider) => {
   .when('/register',{
     controller:'registerCtrl'
   })
+  .when('/post',{
+    controller:'postCtrl'
+  })
 });
