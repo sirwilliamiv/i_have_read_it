@@ -3,48 +3,25 @@
   <button id="loginButton" ng-controller="loginCtrl" href="/shared/components/loginView.html" data-target="loginModal" class="waves-effect grey btn-large"> LOGIN</button>
   <button class="registerButton waves-effect grey btn-large" data-target="registerModal"> Register</button>
   <button id="newPost" class="waves-effect grey btn-large" data-target="postModal"> New Post</button>
-
-
+  <br>
+  <br>
   <!-- ng-repeat over posts -->
-  <div class="section">
-    <!--   Icon Section   -->
-    <div class="row">
-      <div class="col s1">
-        <p>upvotes</p>
-      </div>
-      <div class="col s2">
-        <img class="postImage" src="https://avatars1.githubusercontent.com/u/8325457?v=3&s=100" alt="king james">
-      </div>
-      <div class="col s7">
-        <p>Title</p>
-      </div>
-      <div class="col s2">
-        <p class="light">Poster</p>
-      </div>
+  <div class="row" ng-repeat="(key, value) in all">
+    <div class="col s1 center">
+      <i class="material-icons upvote">thumb_up</i>
+      <p class="upvoteRating">{{value.score}}</p>
+      <i class="material-icons downvote">thumb_down</i>
     </div>
-    <!-- row -->
-  </div>
+    <div class="col s2">
+      <img class="postImage" src={{value.image}}>
+    </div>
+    <div class="col s8">
+      <h5>{{value.url}}</h5>
+      <p class="light">{{value.uid}}</p>
+    </div>
+  </div><!-- row -->
 
-  <!-- section -->
-  <div class="section">
-    <!--   Icon Section   -->
-    <div class="row">
-      <div class="col s1">
-        <p>upvotes</p>
-      </div>
-      <div class="col s2">
-        <img class="postImage" src="https://avatars3.githubusercontent.com/u/23462252?v=3&s=460" alt="Rambo Tam">
-      </div>
-      <div class="col s7">
-        <p>Title</p>
-      </div>
-      <div class="col s2">
-        <p class="light">Poster</p>
-      </div>
-    </div><!-- row -->
-  </div><!-- section -->
-
-   <!-- Login Modal  -->
+  <!-- Login Modal  -->
   <div id="loginModal" ng-controller="loginCtrl" class="modal">
     <div class="modal-content">
       <h4>Login</h4>

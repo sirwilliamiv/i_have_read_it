@@ -9,22 +9,25 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       .catch((error) => console.log(error))
   }
 
-  $scope.getPosts = () => {
+
+ 
     redditFactory.getPosts()
       .then((allPosts) => {
         $scope.all = allPosts.data
         console.log("posts", $scope.all)
       })
-  }
+  
+
 
   // $scope.getPosts()
 
 
-  //Auth
-  $scope.logout = () => {
-    authFactory.logout()
-      .then(() => console.log('logged out'))
-  }
+    //Auth
+    $scope.logout = () => {
+        authFactory.logout()
+            .then(() => console.log('logged out'))
+    }
+
 
   $scope.userLogin = () => {
 
@@ -38,6 +41,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   };
 
 
+
   //materialize Modals below
   $('#loginButton').click(() => {
     $('#loginModal').modal('open')
@@ -47,8 +51,11 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     $('#registerModal').modal('open')
   })
 
-  $('#newPost').click(() => {
-    $('#postModal').modal('open')
-  })
+
+    $('#newPost').click(() => {
+        $('#postModal').modal('open')
+    })
+
+    
 
 })
