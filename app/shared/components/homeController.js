@@ -9,17 +9,13 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
             .catch((error) => console.log(error))
     }
 
-    $scope.getPosts = () => {
         redditFactory.getPosts()
             .then((allPosts) => {
                 $scope.all = allPosts.data
                 console.log("posts", $scope.all)
-            })
-    }
+            });
 
     // $scope.getPosts()
-
-
 
 
 
@@ -60,7 +56,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     //register
     $('#registerModal').modal({
         dismissible: true, // Modal can be dismissed by clicking outside of the modal
-        opacity: .3, // Opacity of modal background
+        opacity: 0.3, // Opacity of modal background
         inDuration: 750, // Transition in duration
         outDuration: 700, // Transition out duration
         startingTop: '100%', // Starting top style attribute
@@ -74,7 +70,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   //register
   $('#registerModal').modal({
     dismissible: true, // Modal can be dismissed by clicking outside of the modal
-    opacity: .3, // Opacity of modal background
+    opacity: 0.3, // Opacity of modal background
     inDuration: 750, // Transition in duration
     outDuration: 700, // Transition out duration
     startingTop: '100%', // Starting top style attribute
@@ -89,7 +85,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
 
   $('#postModal').modal({
     dismissible: true, // Modal can be dismissed by clicking outside of the modal
-    opacity: .3, // Opacity of modal background
+    opacity: 0.3, // Opacity of modal background
     inDuration: 700, // Transition in duration
     outDuration: 700, // Transition out duration
     startingTop: '0%', // Starting top style attribute
