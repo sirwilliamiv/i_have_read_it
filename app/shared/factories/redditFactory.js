@@ -27,4 +27,4 @@ app.factory('redditFactory', ($q)=> {
     // patchSongToPlaylist(){},
     // deleteSong() {}
 
-  }
+  })
