@@ -1,3 +1,3 @@
-console.log("hey")
+console.log("hey");
 
-const app = angular.module('iHaveReadIt', ['ngRoute'])
+const app = angular.module('iHaveReadIt', ['ngRoute']);

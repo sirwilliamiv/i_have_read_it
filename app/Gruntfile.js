@@ -27,12 +27,6 @@ module.exports = function(grunt) {
         }
       },
     },
-    jshint: {
-      files: ['app.js', 'config/**/*.js', 'shared/**/*.js',  'Gruntfile.js'],
-      options: {
-        "esversion": 6,
-      }
-    },
     concat: {
       options: {
         // \n for new line
@@ -48,9 +42,8 @@ module.exports = function(grunt) {
   // Load the Grunt plugin that provides the task.
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-sass');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Default task(s).
-  grunt.registerTask('default', ['sass', 'concat', 'jshint', 'watch']);
+  grunt.registerTask('default', ['sass', 'concat', 'watch']);
 };
