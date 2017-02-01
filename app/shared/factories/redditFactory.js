@@ -19,6 +19,15 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
+    },
+    updateScore() {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    },
+    updateUpvotes() {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    },
+    updateDownvotes() {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
     }
   }
-})
+});

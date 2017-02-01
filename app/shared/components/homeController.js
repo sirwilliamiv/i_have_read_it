@@ -1,7 +1,6 @@
 app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
 
   $scope.newPost = () => {
-
     redditFactory.newPost($scope.Photo, $scope.Title)
       .then(() => {
         console.log("much success")
@@ -9,24 +8,38 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       .catch((error) => console.log(error))
   }
 
+  redditFactory.getPosts()
+    .then((allPosts) => {
+      $scope.all = allPosts.data;
+      console.log("posts", $scope.all);
+    });
 
- 
-    redditFactory.getPosts()
-      .then((allPosts) => {
-        $scope.all = allPosts.data
-        console.log("posts", $scope.all)
-      })
-  
+  // onclick post the result to firebase
+  $scope.upVote = (vote, score, key) => {
+    console.log('upvoted', vote, 'score', score, 'key', key);
+    let newVote = parseInt(vote, 10) + 1;
+    let newScore = parseInt(score, 10) + 1;
+    console.log('upvoted', newVote, 'score', newScore, 'key', key);
+    // patch to reddit factory on key to update upvote and score
+    // redditFactory.updateScore();
+    // redditFactory.updateUpvotes();
+  }
 
+  $scope.downVote = (vote, score, key) => {
+    console.log('downvoted', vote, 'score', score, 'key', key);
+    let newVote = parseInt(vote, 10) + 1;
+    let newScore = parseInt(score, 10) - 1;
+    console.log('downvoted', newVote, 'score', newScore, 'key', key);
+    // patch to reddit factory on key to update upvote and score
+    // redditFactory.updateScore();
+    // redditFactory.updateDownvotes();
+  }
 
-  // $scope.getPosts()
-
-
-    //Auth
-    $scope.logout = () => {
-        authFactory.logout()
-            .then(() => console.log('logged out'))
-    }
+  //Auth
+  $scope.logout = () => {
+    authFactory.logout()
+      .then(() => console.log('logged out'))
+  }
 
 
   $scope.userLogin = () => {
@@ -52,10 +65,10 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   })
 
 
-    $('#newPost').click(() => {
-        $('#postModal').modal('open')
-    })
+  $('#newPost').click(() => {
+    $('#postModal').modal('open')
+  })
 
-    
+
 
 })
