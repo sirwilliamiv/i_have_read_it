@@ -29,6 +29,9 @@ app.config(($routeProvider, $locationProvider) => {
     .when('/post', {
       controller: 'postCtrl',
       templateUrl: '/shared/components/homeView.html',
+    }).when('/logout', {
+      controller: 'logoutCtrl',
+      templateUrl: '/shared/components/homeView.html',
     })
     .otherwise({
       redirectTo: '/main'

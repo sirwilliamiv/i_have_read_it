@@ -47,11 +47,6 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
 
-  //Auth
-  $scope.logout = () => {
-    authFactory.logout()
-      .then(() => console.log('logged out'))
-  }
 
 
 

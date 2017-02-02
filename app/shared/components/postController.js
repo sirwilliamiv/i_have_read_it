@@ -1,28 +1,17 @@
 app.controller('postCtrl', function($scope, $location, redditFactory) {
-console.log('postCtrl!')
-// use postid to name file
- $scope.newPost = () => {
-    handleFiles()
+  console.log('postCtrl!')
+    // use postid to name file
+  $scope.newPost = () => {
+
     redditFactory.newPost($scope.Link, $scope.Title)
-      .then(() => {
+      .then((user) => {
+        console.log(user.data.name)
+        let userId = user.data.name
+         redditFactory.handleFiles(userId)
         console.log("much success")
       })
       .catch(() => $location.path('/login'))
 
-  }
-
-  //upload a photo
-  function handleFiles () {
-    // console.log("event", evt)
-    let storageRef = firebase.storage().ref();
-    let File = $('#fileUpload').prop('files')[0]
-    storageRef.child(File.name + 'aksdfjhksjhf').put(File)
-      .then(function(snapshot) {
-        console.log("downloadurl", snapshot.downloadURL)
-
-        // console.log('Uploaded a blob or file!', spaceRef.name);
-        // return spaceRef.name
-      }).catch(console.error);
   }
 
 
