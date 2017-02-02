@@ -3,15 +3,15 @@ console.log("hey");
 const app = angular.module('iHaveReadIt', ['ngRoute']);
 ;
 app.config(($routeProvider, $locationProvider) => {
-//firebaseAuth here
+  //firebaseAuth here
 
- firebase.initializeApp({
-   apiKey: "AIzaSyB_ZNOxBEUAKGKdWVS3_Lfd5sDGmQ11GkI",
-   authDomain: "reddit-steve.firebaseapp.com",
-   databaseURL: "https://reddit-steve.firebaseio.com",
-   storageBucket: "reddit-steve.appspot.com",
-   messagingSenderId: "386901472273"
- });
+  firebase.initializeApp({
+    apiKey: "AIzaSyB_ZNOxBEUAKGKdWVS3_Lfd5sDGmQ11GkI",
+    authDomain: "reddit-steve.firebaseapp.com",
+    databaseURL: "https://reddit-steve.firebaseio.com",
+    storageBucket: "reddit-steve.appspot.com",
+    messagingSenderId: "386901472273"
+  });
 
 
 
@@ -19,33 +19,33 @@ app.config(($routeProvider, $locationProvider) => {
 
   $locationProvider.hashPrefix("")
   $routeProvider
-  .when('/main', {
-    controller: 'homeCtrl',
-    templateUrl: '/shared/components/homeView.html',
-    resolve: {
-      // authentication resolves from factories
-    }
-  })
-  .when('/login', {
-    controller:'loginCtrl'
-  })
-  .when('/register',{
-    controller:'registerCtrl'
-  })
-  .when('/post',{
-    controller:'postCtrl'
-  })
+    .when('/main', {
+      controller: 'homeCtrl',
+      templateUrl: '/shared/components/homeView.html',
+      resolve: {
+        // authentication resolves from factories
+      }
+    })
+    .when('/login', {
+      controller: 'loginCtrl',
+      templateUrl: '/shared/components/homeView.html',
+    })
+    .when('/register', {
+      controller: 'registerCtrl',
+      templateUrl: '/shared/components/homeView.html',
+    })
+    .when('/post', {
+      controller: 'postCtrl',
+      templateUrl: '/shared/components/homeView.html',
+    })
+    .otherwise({
+      redirectTo: '/main'
+    });
 });
 ;
 app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
 
-  $scope.newPost = () => {
-    redditFactory.newPost($scope.Photo, $scope.Title)
-      .then(() => {
-        console.log("much success")
-      })
-      .catch((error) => console.log(error))
-  }
+
 
   redditFactory.getPosts()
     .then((allPosts) => {
@@ -64,6 +64,19 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     // redditFactory.updateUpvotes();
   }
 
+
+
+    redditFactory.getPosts()
+      .then((allPosts) => {
+        $scope.all = allPosts.data
+        console.log("posts", $scope.all)
+      })
+
+
+
+  // $scope.getPosts()
+
+
   $scope.downVote = (vote, score, key) => {
     console.log('downvoted', vote, 'score', score, 'key', key);
     let newVote = parseInt(vote, 10) + 1;
@@ -73,6 +86,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     // redditFactory.updateScore();
     // redditFactory.updateDownvotes();
   }
+
 
   //Auth
   $scope.logout = () => {
@@ -110,12 +124,13 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
 
 
 
+
 })
 ;
 app.controller('loginCtrl', function($scope, $location) {
 
 
-// $('#loginModal').modal('open');
+$('#loginModal').modal('open');
       //login
   $('#loginModal').modal({
       dismissible: true, // Modal can be dismissed by clicking outside of the modal
@@ -132,21 +147,48 @@ app.controller('loginCtrl', function($scope, $location) {
   });
 });
 ;
-app.controller('postCtrl', function($scope, $location) {
+app.controller('postCtrl', function($scope, $location, redditFactory) {
+console.log('postCtrl!')
+// use postid to name file
+ $scope.newPost = () => {
+    debugger
+    redditFactory.newPost($scope.Link, $scope.Title)
+      .then(() => {
+        console.log("much success")
+      })
+      .catch(() => $location.path('/login'))
 
-   $('#postModal').modal({
-        dismissible: true, // Modal can be dismissed by clicking outside of the modal
-        opacity: .3, // Opacity of modal background
-        inDuration: 700, // Transition in duration
-        outDuration: 700, // Transition out duration
-        startingTop: '0%', // Starting top style attribute
-        endingTop: '20%', // Ending top style attribute
-        ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+  }
 
-            console.log(modal, trigger);
-        },
-        complete: function() { console.log('Closed'); } // Callback for Modal close
-    });
+  //upload a photo
+  $scope.handleFiles = function(evt) {
+    let storageRef = firebase.storage().ref();
+    // var fileList = evt.target.files;  now you can work with the file list
+    // console.log("filelist[0]", fileList[0])
+    console.log($scope.File)
+    storageRef.child($scope.File).put($scope.File)
+      .then(function(snapshot) {
+        console.log(snapshot.downloadURL)
+
+        // console.log('Uploaded a blob or file!', spaceRef.name);
+        // return spaceRef.name
+      }).catch(console.error);
+  }
+
+
+  $('#postModal').modal({
+    dismissible: true, // Modal can be dismissed by clicking outside of the modal
+    opacity: .3, // Opacity of modal background
+    inDuration: 700, // Transition in duration
+    outDuration: 700, // Transition out duration
+    startingTop: '0%', // Starting top style attribute
+    endingTop: '20%', // Ending top style attribute
+    ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+
+      console.log(modal, trigger);
+    },
+    complete: function() { console.log('Closed'); } // Callback for Modal close
+  });
 })
 ;
 app.controller('registerCtrl', function($scope, $location) {
@@ -189,7 +231,7 @@ app.factory('authFactory', ($q) => {
               if (user) {
                 resolve(user);
               } else {
-                reject();
+                reject('Not Logged In');
               }
 
             }); //end const unsubscribe
@@ -204,16 +246,16 @@ app.factory('authFactory', ($q) => {
 app.factory('redditFactory', ($q, authFactory, $http) => {
 
   return {
-    newPost(url, title) {
-
+    newPost(link, title) {
+      console.log('NEW POST')
       return authFactory.getUser().then(user => {
         console.log("addingpost")
           // $scope.title, $scope.artist, $scope.album, $scope.length
         return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
           uid: user.uid,
           Title: title,
-          Link: url,
-          // Name: first
+          Link: link,
+          // Photoid:
           // Upvotes:,
           // Downvotes:,
           // Image:
@@ -223,14 +265,14 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
     },
-    updateScore() {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    updateScore(key, data) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
     },
-    updateUpvotes() {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    updateUpvotes(key, data) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
     },
-    updateDownvotes() {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts.json`)
+    updateDownvotes(key, data) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
     }
   }
 });
