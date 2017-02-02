@@ -10,9 +10,9 @@
   <div class="row" ng-repeat="(key, value) in all">
     <!-- <div ng-repeat="this in value"> -->
       <div class="col s1 center">
-        <i ng-click="upVote(value.upvotes, value.score, key)" class="material-icons upvote">thumb_up</i>
+        <i ng-click="upVote(key)" class="material-icons upvote">thumb_up</i>
         <p class="upvoteRating">{{value.score}}</p>
-        <i ng-click="downVote(value.downvotes, value.score, key)" class="material-icons downvote">thumb_down</i>
+        <i ng-click="downVote(key)" class="material-icons downvote">thumb_down</i>
       </div>
       <div class="col s2">
         <img class="postImage" ng-src="{{value.image}}">

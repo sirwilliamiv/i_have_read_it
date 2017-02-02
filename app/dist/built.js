@@ -31,6 +31,9 @@ app.config(($routeProvider, $locationProvider) => {
     .when('/post', {
       controller: 'postCtrl',
       templateUrl: '/shared/components/homeView.html',
+    }).when('/logout', {
+      controller: 'logoutCtrl',
+      templateUrl: '/shared/components/homeView.html',
     })
     .otherwise({
       redirectTo: '/main'
@@ -41,31 +44,50 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   redditFactory.getPosts()
     .then((allPosts) => {
       $scope.all = allPosts.data;
-      console.log("posts", $scope.all);
+      // console.log("posts", $scope.all);
     });
 
   redditFactory.getPosts()
     .then((allPosts) => {
       $scope.all = allPosts.data
-      console.log("posts", $scope.all)
+        // console.log("posts", $scope.all)
     })
 
-  // $scope.getPosts()
-
   // onclick post the result to firebase
-  $scope.upVote = (vote, score, key) => {
+  $scope.upVote = (postkey) => {
     // get current user
     authFactory
       .getUser()
       .then((e) => {
-        // console.log('current user is', e.uid);
         // see if user has already upvoted or downvoted
-        // loop through the upvotes to see if there is a match
+        // loop through the postkey passed from click to find the post
+        let voted = false;
         for (key in $scope.all) {
-          let obj = $scope.all[key];
-          console.log('upvotes', obj.upvotes)
-        //   if (e.uid === $scope.all.key.upvotes)
+          // when the keys match, loop through the post and get the upvotes & downvotes
+          if (key === postkey) {
+            let obj = $scope.all[key];
+            for (k1 in obj.upvotes) {
+              // if user upvoted then do nothing
+              if (e.uid === obj.upvotes[k1]) {
+                console.log('you have already upvoted this post - k1', k1);
+                return voted = true;
+              }
+            }
+            for (k2 in obj.downvotes) {
+              // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
+              console.log('uid vs key2', e.uid, obj.downvotes[k2])
+              if (e.uid === obj.downvotes[k2]) { // upvoters uid will be obj.upvotes[k]
+                console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
+                return voted = true;
+              }
+            }
+          }
+
         }
+      })
+      .then((response) => {
+        // the response will be true if user has already voted, false if they haven't, or undefined if downvotes/upvotes don't exist yet.
+        console.log(response)
       });
 
     // if user downvoted, remove downvote add upvote and update score
@@ -93,11 +115,6 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
 
-  //Auth
-  $scope.logout = () => {
-    authFactory.logout()
-      .then(() => console.log('logged out'))
-  }
 
 
 
@@ -146,31 +163,31 @@ $('#loginModal').modal('open');
   });
 });
 ;
+app.controller('logoutCtrl', function($scope, $location, authFactory) {
+
+ //Auth
+  $scope.logout = () => {
+    authFactory.logout()
+      .then(() => console.log('logged out'))
+  }
+
+
+})
+;
 app.controller('postCtrl', function($scope, $location, redditFactory) {
-console.log('postCtrl!')
-// use postid to name file
- $scope.newPost = () => {
-    handleFiles()
+  console.log('postCtrl!')
+    // use postid to name file
+  $scope.newPost = () => {
+
     redditFactory.newPost($scope.Link, $scope.Title)
-      .then(() => {
+      .then((user) => {
+        console.log(user.data.name)
+        let userId = user.data.name
+         redditFactory.handleFiles(userId)
         console.log("much success")
       })
       .catch(() => $location.path('/login'))
 
-  }
-
-  //upload a photo
-  function handleFiles () {
-    // console.log("event", evt)
-    let storageRef = firebase.storage().ref();
-    let File = $('#fileUpload').prop('files')[0]
-    storageRef.child(File.name + 'aksdfjhksjhf').put(File)
-      .then(function(snapshot) {
-        console.log("downloadurl", snapshot.downloadURL)
-
-        // console.log('Uploaded a blob or file!', spaceRef.name);
-        // return spaceRef.name
-      }).catch(console.error);
   }
 
 
@@ -259,13 +276,25 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
         return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
           uid: user.uid,
           Title: title,
-          Link: link,
-          // Photoid:
-          // Upvotes:,
-          // Downvotes:,
-          // Image:
+          url: link,
+
         })
       })
+    },
+    handleFiles (userId) {
+    let storageRef = firebase.storage().ref();
+    let File = $('#fileUpload').prop('files')[0]
+    console.log("id?", userId)
+    console.log('file',File)
+    storageRef.child(File.name + userId).put(File)
+      .then(function(snapshot) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${userId}.json`,
+        {
+          image: snapshot.downloadURL
+        })
+
+        console.log("downloadurl", snapshot.downloadURL)
+      }).catch(console.error);
     },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
