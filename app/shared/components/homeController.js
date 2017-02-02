@@ -54,17 +54,6 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
 
-  $scope.userLogin = () => {
-
-    authFactory.login($scope.user_email, $scope.user_password)
-      .then(() => console.log("woohoo"));
-  };
-  $scope.createUser = () => {
-    console.log($scope.user_email)
-    authFactory.createUser($scope.user_email, $scope.user_password)
-      .then(() => console.log("success"));
-  };
-
 
 
   //materialize Modals below
