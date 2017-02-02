@@ -1,5 +1,10 @@
-app.controller('loginCtrl', function($scope, $location) {
+app.controller('loginCtrl', function($scope, $location, authFactory) {
 
+  $scope.userLogin = () => {
+
+    authFactory.login($scope.user_email, $scope.user_password)
+      .then(() => console.log("woohoo"));
+  };
 
 $('#loginModal').modal('open');
       //login

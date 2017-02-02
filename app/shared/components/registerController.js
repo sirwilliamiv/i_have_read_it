@@ -1,4 +1,11 @@
-app.controller('registerCtrl', function($scope, $location) {
+app.controller('registerCtrl', function($scope, $location, authFactory) {
+
+
+  $scope.createUser = () => {
+    console.log($scope.user_email)
+    authFactory.createUser($scope.user_email, $scope.user_password)
+      .then(() => console.log("success"));
+  };
 
     //register
     $('#registerModal').modal({

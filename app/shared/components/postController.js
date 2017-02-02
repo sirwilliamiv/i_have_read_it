@@ -19,7 +19,7 @@ console.log('postCtrl!')
     console.log($scope.File)
     storageRef.child($scope.File).put($scope.File)
       .then(function(snapshot) {
-        console.log(snapshot.downloadURL)
+        console.log("downloadurl", snapshot.downloadURL)
 
         // console.log('Uploaded a blob or file!', spaceRef.name);
         // return spaceRef.name
