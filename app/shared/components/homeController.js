@@ -16,12 +16,19 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   // onclick post the result to firebase
   $scope.upVote = (vote, score, key) => {
     // get current user
-    authFactory.getUser()
+    authFactory
+      .getUser()
       .then((e) => {
-        console.log(e)
-      })
+        // console.log('current user is', e.uid);
+        // see if user has already upvoted or downvoted
+        // loop through the upvotes to see if there is a match
+        for (key in $scope.all) {
+          let obj = $scope.all[key];
+          console.log('upvotes', obj.upvotes)
+        //   if (e.uid === $scope.all.key.upvotes)
+        }
+      });
 
-    // see if user has already upvoted or downvoted
     // if user downvoted, remove downvote add upvote and update score
     // if user upvoted already, do nothing
     // else add upvote and update score
