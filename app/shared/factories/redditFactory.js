@@ -21,13 +21,13 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
     },
     updateScore(key, data) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/score.json`, data)
     },
     updateUpvotes(key, data) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes.json`, data)
     },
     updateDownvotes(key, data) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes.json`, data)
     }
   }
 });

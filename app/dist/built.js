@@ -44,47 +44,39 @@ app.config(($routeProvider, $locationProvider) => {
 });
 ;
 app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
-
-
-
   redditFactory.getPosts()
     .then((allPosts) => {
       $scope.all = allPosts.data;
       console.log("posts", $scope.all);
     });
 
-  // onclick post the result to firebase
-  $scope.upVote = (vote, score, key) => {
-    console.log('upvoted', vote, 'score', score, 'key', key);
-    let newVote = parseInt(vote, 10) + 1;
-    let newScore = parseInt(score, 10) + 1;
-    console.log('upvoted', newVote, 'score', newScore, 'key', key);
-    // patch to reddit factory on key to update upvote and score
-    // redditFactory.updateScore();
-    // redditFactory.updateUpvotes();
-  }
-
-
-
-    redditFactory.getPosts()
-      .then((allPosts) => {
-        $scope.all = allPosts.data
-        console.log("posts", $scope.all)
-      })
-
-
+  redditFactory.getPosts()
+    .then((allPosts) => {
+      $scope.all = allPosts.data
+      console.log("posts", $scope.all)
+    })
 
   // $scope.getPosts()
 
+  // onclick post the result to firebase
+  $scope.upVote = (vote, score, key) => {
+    console.log('upvoted', vote, 'score', score, 'key', key);
+    let newVote = ((parseInt(vote, 10) + 1).toString());
+    let newScore = ((parseInt(score, 10) + 1).toString());
+    console.log('upvoted', newVote, 'score', newScore, 'key', key);
+    // patch to reddit factory on key to update upvote and score
+    redditFactory.updateUpvotes(key, newVote);
+    redditFactory.updateScore(key, newScore);
+  }
 
   $scope.downVote = (vote, score, key) => {
     console.log('downvoted', vote, 'score', score, 'key', key);
-    let newVote = parseInt(vote, 10) + 1;
-    let newScore = parseInt(score, 10) - 1;
+    let newVote = ((parseInt(vote, 10) + 1).toString());
+    let newScore = ((parseInt(score, 10) - 1).toString());
     console.log('downvoted', newVote, 'score', newScore, 'key', key);
     // patch to reddit factory on key to update upvote and score
-    // redditFactory.updateScore();
-    // redditFactory.updateDownvotes();
+    redditFactory.updateDownvotes(key, newVote);
+    redditFactory.updateScore(key, newScore);
   }
 
 
@@ -266,13 +258,13 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
     },
     updateScore(key, data) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/score.json`, data)
     },
     updateUpvotes(key, data) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes.json`, data)
     },
     updateDownvotes(key, data) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, data)
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes.json`, data)
     }
   }
 });
