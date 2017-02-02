@@ -1,5 +1,3 @@
-console.log("hey");
-
 const app = angular.module('iHaveReadIt', ['ngRoute']);
 ;
 app.config(($routeProvider, $locationProvider) => {
@@ -12,10 +10,6 @@ app.config(($routeProvider, $locationProvider) => {
     storageBucket: "reddit-steve.appspot.com",
     messagingSenderId: "386901472273"
   });
-
-
-
-
 
   $locationProvider.hashPrefix("")
   $routeProvider
@@ -60,13 +54,25 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
 
   // onclick post the result to firebase
   $scope.upVote = (vote, score, key) => {
-    console.log('upvoted', vote, 'score', score, 'key', key);
-    let newVote = ((parseInt(vote, 10) + 1).toString());
-    let newScore = ((parseInt(score, 10) + 1).toString());
-    console.log('upvoted', newVote, 'score', newScore, 'key', key);
-    // patch to reddit factory on key to update upvote and score
-    redditFactory.updateUpvotes(key, newVote);
-    redditFactory.updateScore(key, newScore);
+    // get current user
+    authFactory.getUser()
+      .then((e) => {
+        console.log(e)
+      })
+
+    // see if user has already upvoted or downvoted
+    // if user downvoted, remove downvote add upvote and update score
+    // if user upvoted already, do nothing
+    // else add upvote and update score
+
+
+    // console.log('upvoted', vote, 'score', score, 'key', key);
+    // let newVote = ((parseInt(vote, 10) + 1).toString());
+    // let newScore = ((parseInt(score, 10) + 1).toString());
+    // console.log('upvoted', newVote, 'score', newScore, 'key', key);
+    // // patch to reddit factory on key to update upvote and score
+    // redditFactory.updateUpvotes(key, newVote);
+    // redditFactory.updateScore(key, newScore);
   }
 
   $scope.downVote = (vote, score, key) => {
