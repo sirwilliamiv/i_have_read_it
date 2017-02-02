@@ -34,11 +34,17 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     updateScore(key, data) {
       $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/score.json`, data)
     },
-    updateUpvotes(key, data) {
-      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes.json`, data)
+    addDownvotes(key, uid) {
+      $http.post(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes.json`, `"${uid}"`)
     },
-    updateDownvotes(key, data) {
-      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes.json`, data)
+    addUpvotes(key, uid) {
+      $http.post(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes.json`, `"${uid}"`)
+    },
+    removeDownvotes(key, k2) {
+      $http.delete(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes/${k2}.json`)
+    },
+    removeUpvotes(key, k2) {
+      $http.delete(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes/${k2}.json`)
     }
   }
 });

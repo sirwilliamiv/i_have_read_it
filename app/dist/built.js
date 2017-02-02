@@ -17,7 +17,16 @@ app.config(($routeProvider, $locationProvider) => {
       controller: 'homeCtrl',
       templateUrl: '/shared/components/homeView.html',
       resolve: {
-        // authentication resolves from factories
+          showPosts (redditFactory, $route) {
+            return redditFactory.getPosts()
+          },
+          user (authFactory, $location) {
+            return authFactory.getUser().catch(() => {
+                var $toastContent = $('<span>Please Register or Login to contribute to content </span>');
+                // Materialize.toast($toastContent, 500);
+                // $('#loginModal').modal('open');
+              $location.url('/login')})
+          },
       }
     })
     .when('/login', {
@@ -56,62 +65,118 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   // onclick post the result to firebase
   $scope.upVote = (postkey) => {
     // get current user
-    authFactory
-      .getUser()
-      .then((e) => {
-        // see if user has already upvoted or downvoted
-        // loop through the postkey passed from click to find the post
-        let voted = false;
-        for (key in $scope.all) {
-          // when the keys match, loop through the post and get the upvotes & downvotes
-          if (key === postkey) {
-            let obj = $scope.all[key];
-            for (k1 in obj.upvotes) {
-              // if user upvoted then do nothing
-              if (e.uid === obj.upvotes[k1]) {
-                console.log('you have already upvoted this post - k1', k1);
-                return voted = true;
+    let voted = false;
+    let uid;
+    redditFactory.getPosts()
+      .then((allPosts) => {
+        $scope.all = allPosts.data
+          // console.log("posts", $scope.all)
+      }).then(() => {
+        authFactory
+          .getUser()
+          .then((e) => {
+            uid = e.uid;
+          })
+          .then(() => {
+            // see if user has already upvoted or downvoted
+            // loop through the postkey passed from click to find the post
+            for (key in $scope.all) {
+              // when the keys match, loop through the post and get the upvotes & downvotes
+              if (key === postkey) {
+                let obj = $scope.all[key];
+                for (k1 in obj.upvotes) {
+                  // if user upvoted then do nothing
+                  if (uid === obj.upvotes[k1]) {
+                    return voted = true;
+                  }
+                }
+                for (k2 in obj.downvotes) {
+                  // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
+                  if (uid === obj.downvotes[k2]) { // upvoters uid will be obj.upvotes[k]
+                    // console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
+                    // delete downvote
+                    redditFactory.removeDownvotes(key, k2);
+                    // add upvote
+                    redditFactory.addUpvotes(key, uid);
+                    return voted = true;
+                  }
+                }
               }
             }
-            for (k2 in obj.downvotes) {
-              // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
-              console.log('uid vs key2', e.uid, obj.downvotes[k2])
-              if (e.uid === obj.downvotes[k2]) { // upvoters uid will be obj.upvotes[k]
-                console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
-                return voted = true;
+          })
+          // if user has not voted then add upvote.
+          .then(() => {
+            // the response will be true if user has already voted, false if they haven't
+            if (voted === false) {
+              for (key in $scope.all) {
+                // when the keys match, loop through the post and get the upvotes & downvotes
+                if (key === postkey) {
+                  // console.log('keys match', key, postkey)
+                  redditFactory.addUpvotes(key, uid)
+                }
               }
             }
-          }
-
-        }
-      })
-      .then((response) => {
-        // the response will be true if user has already voted, false if they haven't, or undefined if downvotes/upvotes don't exist yet.
-        console.log(response)
+          })
       });
-
-    // if user downvoted, remove downvote add upvote and update score
-    // if user upvoted already, do nothing
-    // else add upvote and update score
-
-
-    // console.log('upvoted', vote, 'score', score, 'key', key);
-    // let newVote = ((parseInt(vote, 10) + 1).toString());
-    // let newScore = ((parseInt(score, 10) + 1).toString());
-    // console.log('upvoted', newVote, 'score', newScore, 'key', key);
-    // // patch to reddit factory on key to update upvote and score
-    // redditFactory.updateUpvotes(key, newVote);
-    // redditFactory.updateScore(key, newScore);
   }
 
-  $scope.downVote = (vote, score, key) => {
-    console.log('downvoted', vote, 'score', score, 'key', key);
-    let newVote = ((parseInt(vote, 10) + 1).toString());
-    let newScore = ((parseInt(score, 10) - 1).toString());
-    console.log('downvoted', newVote, 'score', newScore, 'key', key);
-    // patch to reddit factory on key to update upvote and score
-    redditFactory.updateDownvotes(key, newVote);
-    redditFactory.updateScore(key, newScore);
+  $scope.downVote = (postkey) => {
+        // get current user
+    let voted = false;
+    let uid;
+    redditFactory.getPosts()
+      .then((allPosts) => {
+        $scope.all = allPosts.data
+          // console.log("posts", $scope.all)
+      })
+      .then(() => {
+        authFactory
+          .getUser()
+          .then((e) => {
+            uid = e.uid;
+          })
+          .then(() => {
+            // see if user has already upvoted or downvoted
+            // loop through the postkey passed from click to find the post
+            for (key in $scope.all) {
+              // when the keys match, loop through the post and get the upvotes & downvotes
+              if (key === postkey) {
+                let obj = $scope.all[key];
+                for (k1 in obj.downvotes) {
+                  // if user downvoted then do nothing
+                  if (uid === obj.downvotes[k1]) {
+                    return voted = true;
+                  }
+                }
+                for (k2 in obj.upvotes) {
+                  // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
+                  if (uid === obj.upvotes[k2]) { // upvoters uid will be obj.upvotes[k]
+                    // console.log('delete the upvote and add a downvote, postkey & key match, k2 dv', postkey, key, k2);
+                    // delete upvote
+                    redditFactory.removeUpvotes(key, k2);
+                    // add downvote
+                    redditFactory.addDownvotes(key, uid);
+                    return voted = true;
+                  }
+                }
+              }
+            }
+          })
+          // if user has not voted then add downvote.
+          .then(() => {
+            // the response will be true if user has already voted, false if they haven't
+            if (voted === false) {
+              console.log('user has not yet voted so begin the vote')
+              for (key in $scope.all) {
+                // when the keys match, loop through the post and get the upvotes & downvotes
+                if (key === postkey) {
+                  console.log('keys match', key, postkey)
+                  redditFactory.addDownvotes(key, uid)
+                }
+              }
+            }
+          })
+      });
   }
 
 
@@ -143,13 +208,16 @@ app.controller('loginCtrl', function($scope, $location, authFactory) {
   $scope.userLogin = () => {
 
     authFactory.login($scope.user_email, $scope.user_password)
-      .then(() => console.log("woohoo"));
+      .then(() => {
+        console.log("woohoo")
+        $location.url('/main')
+      });
   };
 
 $('#loginModal').modal('open');
       //login
   $('#loginModal').modal({
-      dismissible: true, // Modal can be dismissed by clicking outside of the modal
+      dismissible: false, // Modal can be dismissed by clicking outside of the modal
       opacity: 0.3, // Opacity of modal background
       inDuration: 700, // Transition in duration
       outDuration: 700, // Transition out duration
@@ -168,7 +236,9 @@ app.controller('logoutCtrl', function($scope, $location, authFactory) {
  //Auth
   $scope.logout = () => {
     authFactory.logout()
-      .then(() => console.log('logged out'))
+      .then(() => {console.log('logged out')
+        $location.url('/login')
+      })
   }
 
 
@@ -181,7 +251,6 @@ app.controller('postCtrl', function($scope, $location, redditFactory) {
 
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
-        console.log(user.data.name)
         let userId = user.data.name
          redditFactory.handleFiles(userId)
         console.log("much success")
@@ -211,7 +280,7 @@ app.controller('registerCtrl', function($scope, $location, authFactory) {
 
   $scope.createUser = () => {
     console.log($scope.user_email)
-    authFactory.createUser($scope.user_email, $scope.user_password)
+    authFactory.createUser($scope.user_email, $scope.user_password,$scope.firstName, $scope.lastName)
       .then(() => console.log("success"));
   };
 
@@ -236,28 +305,31 @@ app.factory('authFactory', ($q) => {
     login(email, pass) {
       console.log("auth", email);
       return $q.resolve(firebase.auth().signInWithEmailAndPassword(email, pass).then((data) => {
-        console.log(data.uid);
-        return UID = data.uid;
+        // console.log(data.uid);
+        // return UID = data.uid;
       }));
     }, //end login
 
-    createUser(email, pass) {
+    createUser(email, pass, first, last) {
       console.log("email", email);
       return $q.resolve(firebase.auth().createUserWithEmailAndPassword(email, pass));
 
     }, //end createUser
     getUser() {
       return $q((resolve, reject) => {
-          const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-              unsubscribe();
-              if (user) {
-                resolve(user);
-              } else {
-                reject('Not Logged In');
-              }
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+          unsubscribe();
+          if (user) {
+            resolve(user);
+          } else {
+            reject(() => {
+              var $toastContent = $('<span>Not Logged In</span>');
+              Materialize.toast($toastContent, 5000);
+              });
+          }
 
-            }); //end const unsubscribe
-        }); //end return getUser
+        }); //end const unsubscribe
+      }); //end return getUser
     }, //end getUser
     logout() {
       return $q.resolve(firebase.auth().signOut());
@@ -275,26 +347,25 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
           // $scope.title, $scope.artist, $scope.album, $scope.length
         return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
           uid: user.uid,
-          Title: title,
+          title: title,
           url: link,
 
         })
       })
     },
-    handleFiles (userId) {
-    let storageRef = firebase.storage().ref();
-    let File = $('#fileUpload').prop('files')[0]
-    console.log("id?", userId)
-    console.log('file',File)
-    storageRef.child(File.name + userId).put(File)
-      .then(function(snapshot) {
-      $http.patch(`https://reddit-steve.firebaseio.com/posts/${userId}.json`,
-        {
-          image: snapshot.downloadURL
-        })
+    handleFiles(userId) {
+      let storageRef = firebase.storage().ref();
+      let File = $('#fileUpload').prop('files')[0]
+        // console.log("id?", userId)
+        // console.log('file',File)
+      storageRef.child(File.name + userId).put(File)
+        .then(function(snapshot) {
+          $http.patch(`https://reddit-steve.firebaseio.com/posts/${userId}.json`, {
+            image: snapshot.downloadURL
+          })
 
-        console.log("downloadurl", snapshot.downloadURL)
-      }).catch(console.error);
+          console.log("downloadurl", snapshot.downloadURL)
+        }).catch(console.error);
     },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
@@ -302,11 +373,17 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     updateScore(key, data) {
       $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/score.json`, data)
     },
-    updateUpvotes(key, data) {
-      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes.json`, data)
+    addDownvotes(key, uid) {
+      $http.post(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes.json`, `"${uid}"`)
     },
-    updateDownvotes(key, data) {
-      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes.json`, data)
+    addUpvotes(key, uid) {
+      $http.post(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes.json`, `"${uid}"`)
+    },
+    removeDownvotes(key, k2) {
+      $http.delete(`https://reddit-steve.firebaseio.com/posts/${key}/downvotes/${k2}.json`)
+    },
+    removeUpvotes(key, k2) {
+      $http.delete(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes/${k2}.json`)
     }
   }
 });
