@@ -55,12 +55,19 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   // onclick post the result to firebase
   $scope.upVote = (vote, score, key) => {
     // get current user
-    authFactory.getUser()
+    authFactory
+      .getUser()
       .then((e) => {
-        console.log(e)
-      })
+        // console.log('current user is', e.uid);
+        // see if user has already upvoted or downvoted
+        // loop through the upvotes to see if there is a match
+        for (key in $scope.all) {
+          let obj = $scope.all[key];
+          console.log('upvotes', obj.upvotes)
+        //   if (e.uid === $scope.all.key.upvotes)
+        }
+      });
 
-    // see if user has already upvoted or downvoted
     // if user downvoted, remove downvote add upvote and update score
     // if user upvoted already, do nothing
     // else add upvote and update score
@@ -93,17 +100,6 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
 
-  $scope.userLogin = () => {
-
-    authFactory.login($scope.user_email, $scope.user_password)
-      .then(() => console.log("woohoo"));
-  };
-  $scope.createUser = () => {
-    console.log($scope.user_email)
-    authFactory.createUser($scope.user_email, $scope.user_password)
-      .then(() => console.log("success"));
-  };
-
 
 
   //materialize Modals below
@@ -125,8 +121,13 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
 
 })
 ;
-app.controller('loginCtrl', function($scope, $location) {
+app.controller('loginCtrl', function($scope, $location, authFactory) {
 
+  $scope.userLogin = () => {
+
+    authFactory.login($scope.user_email, $scope.user_password)
+      .then(() => console.log("woohoo"));
+  };
 
 $('#loginModal').modal('open');
       //login
@@ -149,7 +150,7 @@ app.controller('postCtrl', function($scope, $location, redditFactory) {
 console.log('postCtrl!')
 // use postid to name file
  $scope.newPost = () => {
-    debugger
+    handleFiles()
     redditFactory.newPost($scope.Link, $scope.Title)
       .then(() => {
         console.log("much success")
@@ -159,14 +160,13 @@ console.log('postCtrl!')
   }
 
   //upload a photo
-  $scope.handleFiles = function(evt) {
+  function handleFiles () {
+    // console.log("event", evt)
     let storageRef = firebase.storage().ref();
-    // var fileList = evt.target.files;  now you can work with the file list
-    // console.log("filelist[0]", fileList[0])
-    console.log($scope.File)
-    storageRef.child($scope.File).put($scope.File)
+    let File = $('#fileUpload').prop('files')[0]
+    storageRef.child(File.name + 'aksdfjhksjhf').put(File)
       .then(function(snapshot) {
-        console.log(snapshot.downloadURL)
+        console.log("downloadurl", snapshot.downloadURL)
 
         // console.log('Uploaded a blob or file!', spaceRef.name);
         // return spaceRef.name
@@ -189,7 +189,14 @@ console.log('postCtrl!')
   });
 })
 ;
-app.controller('registerCtrl', function($scope, $location) {
+app.controller('registerCtrl', function($scope, $location, authFactory) {
+
+
+  $scope.createUser = () => {
+    console.log($scope.user_email)
+    authFactory.createUser($scope.user_email, $scope.user_password)
+      .then(() => console.log("success"));
+  };
 
     //register
     $('#registerModal').modal({
