@@ -7,7 +7,8 @@
   <br>
 
   <!-- ng-repeat over posts -->
-  <div class="row" ng-repeat="(key, value) in all">
+  <div class="row" ng-repeat="(key, value) in all |toArray : false| orderBy: '-score' ">
+  <!--  -->
     <!-- <div ng-repeat="this in value"> -->
       <div class="col s1 center">
         <i ng-click="upVote(key)" class="material-icons upvote">thumb_up</i>

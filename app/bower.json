@@ -23,6 +23,7 @@
     "angular-route": "^1.6.1",
     "materialize": "^0.98.0",
     "firebase": "^3.6.7",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "angular-toArrayFilter": "^1.0.1"
   }
 }

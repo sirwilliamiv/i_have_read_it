@@ -8,6 +8,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   redditFactory.getPosts()
     .then((allPosts) => {
       $scope.all = allPosts.data
+
         // console.log("posts", $scope.all)
     })
 
