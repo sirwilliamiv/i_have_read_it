@@ -8,8 +8,8 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   redditFactory.getPosts()
     .then((allPosts) => {
       $scope.all = allPosts.data
+      redditFactory.finalScore($scope.all)
 
-        // console.log("posts", $scope.all)
     })
 
   // onclick post the result to firebase
