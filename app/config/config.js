@@ -9,10 +9,6 @@ app.config(($routeProvider, $locationProvider) => {
     messagingSenderId: "386901472273"
   });
 
-
-
-
-
   $locationProvider.hashPrefix("")
   $routeProvider
     .when('/main', {
