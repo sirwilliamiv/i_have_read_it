@@ -9,13 +9,25 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
         return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
           uid: user.uid,
           Title: title,
-          Link: link,
-          // Photoid:
-          // Upvotes:,
-          // Downvotes:,
-          // Image:
+          url: link,
+
         })
       })
+    },
+    handleFiles (userId) {
+    let storageRef = firebase.storage().ref();
+    let File = $('#fileUpload').prop('files')[0]
+    console.log("id?", userId)
+    console.log('file',File)
+    storageRef.child(File.name + userId).put(File)
+      .then(function(snapshot) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${userId}.json`,
+        {
+          image: snapshot.downloadURL
+        })
+
+        console.log("downloadurl", snapshot.downloadURL)
+      }).catch(console.error);
     },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
