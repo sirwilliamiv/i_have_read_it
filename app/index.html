@@ -10,18 +10,23 @@
 </head>
 <body ng-app="iHaveReadIt">
   <div ng-view></div>
+
+  <!-- dependencies -->
   <script src="/libs/firebase/firebase.js"></script>
   <script src="/libs/jquery/dist/jquery.js"></script>
   <script src="/libs/materialize/dist/js/materialize.min.js"></script>
   <script src="/libs/angular/angular.min.js"></script>
   <script src="/libs/angular-route/angular-route.min.js"></script>
   <script src="/libs/lodash/dist/lodash.js"></script>
+  <!-- app -->
   <script src="/app.js"></script>
   <script src="/config/config.js"></script>
+  <!-- controllers -->
   <script src="/shared/components/homeController.js"></script>
   <script src="/shared/components/registerController.js"></script>
   <script src="/shared/components/postController.js"></script>
   <script src="/shared/components/loginController.js"></script>
+  <!-- factories -->
   <script src="/shared/factories/authFactory.js"></script>
   <script src="/shared/factories/redditFactory.js"></script>
 </body>

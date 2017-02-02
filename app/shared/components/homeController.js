@@ -26,7 +26,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
 
   $scope.downVote = (vote, score, key) => {
     console.log('downvoted', vote, 'score', score, 'key', key);
-    let newVote = ((parseInt(vote, 10) + 1).toString());
+    let newVote = ((parseInt(vote, 10) + 1).toString();
     let newScore = ((parseInt(score, 10) - 1).toString());
     console.log('downvoted', newVote, 'score', newScore, 'key', key);
     // patch to reddit factory on key to update upvote and score
