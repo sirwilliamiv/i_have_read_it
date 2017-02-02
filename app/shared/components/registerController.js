@@ -3,7 +3,7 @@ app.controller('registerCtrl', function($scope, $location, authFactory) {
 
   $scope.createUser = () => {
     console.log($scope.user_email)
-    authFactory.createUser($scope.user_email, $scope.user_password)
+    authFactory.createUser($scope.user_email, $scope.user_password,$scope.firstName, $scope.lastName)
       .then(() => console.log("success"));
   };
 

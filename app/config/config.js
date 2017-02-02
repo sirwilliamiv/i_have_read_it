@@ -15,7 +15,16 @@ app.config(($routeProvider, $locationProvider) => {
       controller: 'homeCtrl',
       templateUrl: '/shared/components/homeView.html',
       resolve: {
-        // authentication resolves from factories
+          showPosts (redditFactory, $route) {
+            return redditFactory.getPosts()
+          },
+          user (authFactory, $location) {
+            return authFactory.getUser().catch(() => {
+                 var $toastContent = $('<span>Please Register or Login to contribute to content </span>');
+              // Materialize.toast($toastContent, 500);
+               // $('#loginModal').modal('open');
+              $location.url('/login')})
+          },
       }
     })
     .when('/login', {
