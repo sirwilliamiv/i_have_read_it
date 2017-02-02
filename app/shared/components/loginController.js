@@ -3,13 +3,16 @@ app.controller('loginCtrl', function($scope, $location, authFactory) {
   $scope.userLogin = () => {
 
     authFactory.login($scope.user_email, $scope.user_password)
-      .then(() => console.log("woohoo"));
+      .then(() => {
+        console.log("woohoo")
+        $location.url('/main')
+      });
   };
 
 $('#loginModal').modal('open');
       //login
   $('#loginModal').modal({
-      dismissible: true, // Modal can be dismissed by clicking outside of the modal
+      dismissible: false, // Modal can be dismissed by clicking outside of the modal
       opacity: 0.3, // Opacity of modal background
       inDuration: 700, // Transition in duration
       outDuration: 700, // Transition out duration

@@ -5,7 +5,6 @@ app.controller('postCtrl', function($scope, $location, redditFactory) {
 
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
-        console.log(user.data.name)
         let userId = user.data.name
          redditFactory.handleFiles(userId)
         console.log("much success")
