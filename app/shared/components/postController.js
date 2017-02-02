@@ -2,7 +2,7 @@ app.controller('postCtrl', function($scope, $location, redditFactory) {
 console.log('postCtrl!')
 // use postid to name file
  $scope.newPost = () => {
-    debugger
+    handleFiles()
     redditFactory.newPost($scope.Link, $scope.Title)
       .then(() => {
         console.log("much success")
@@ -12,12 +12,11 @@ console.log('postCtrl!')
   }
 
   //upload a photo
-  $scope.handleFiles = function(evt) {
+  function handleFiles () {
+    // console.log("event", evt)
     let storageRef = firebase.storage().ref();
-    // var fileList = evt.target.files;  now you can work with the file list
-    // console.log("filelist[0]", fileList[0])
-    console.log($scope.File)
-    storageRef.child($scope.File).put($scope.File)
+    let File = $('#fileUpload').prop('files')[0]
+    storageRef.child(File.name + 'aksdfjhksjhf').put(File)
       .then(function(snapshot) {
         console.log("downloadurl", snapshot.downloadURL)
 
