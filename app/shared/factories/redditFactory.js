@@ -27,20 +27,13 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
           console.log("downloadurl", snapshot.downloadURL)
         }).catch(console.error);
     },
-    // finalScore(all){
-    //   for(obj in all)
 
-    //   let u = Object.keys(obj.upvotes).length
-    //   let d = Object.keys(obj.downvotes).length
-    //   return () =>{
-    //   let  s = (all.upvotes - all.downvotes)
-    //   console.log("score?", s)
-    //   }
 
 
     // },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
+        .then(res => res.data)
     },
     getUsers() {
       return $http.get(`https://reddit-steve.firebaseio.com/users.json`)
