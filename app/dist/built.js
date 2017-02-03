@@ -17,7 +17,7 @@ app.config(($routeProvider, $locationProvider) => {
       controller: 'homeCtrl',
       templateUrl: '/shared/components/homeView.html',
       resolve: {
-          showPosts (redditFactory, $route) {
+          posts (redditFactory) {
             return redditFactory.getPosts()
           },
           user (authFactory, $location) {
@@ -49,12 +49,35 @@ app.config(($routeProvider, $locationProvider) => {
     });
 });
 ;
-app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
-  redditFactory.getPosts()
-    .then((allPosts) => {
-      $scope.all = allPosts.data;
-      // console.log("posts", $scope.all);
-    });
+app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory, posts, user) {
+
+  $scope.all = posts
+
+  // create score
+  for (obj in $scope.all) {
+    let u;
+    let d;
+    if ($scope.all[obj].upvotes === undefined) {
+      u = 0;
+    } else {
+      u = Object.keys($scope.all[obj].upvotes).length;
+    }
+    if ($scope.all[obj].downvotes === undefined) {
+      d = 0;
+    } else {
+      d = Object.keys($scope.all[obj].downvotes).length;
+    }
+    let score = u - d
+    let key = obj
+    redditFactory.updateScore(key, score)
+  }
+
+  // copy post key into post
+  for (key in $scope.all) {
+    if ($scope.all[key].postKey === undefined) {
+      redditFactory.copyKey(key, key);
+    }
+  }
 
   // get users then loop through post and if they match then patch the username to the post
   redditFactory.getUsers()
@@ -77,23 +100,18 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       }
     })
 
-
-  // redditFactory.getPosts()
-  //   .then((allPosts) => {
-  //     $scope.all = allPosts.data
-  //     redditFactory.finalScore($scope.all)
-  //   })
-
   // onclick post the result to firebase
   $scope.upVote = (postkey) => {
-    // get current user
+    console.log('postKey', postkey)
+      // get current user
     let voted = false;
     let uid;
     redditFactory.getPosts()
       .then((allPosts) => {
-        $scope.all = allPosts.data
+        $scope.all = allPosts
           // console.log("posts", $scope.all)
-      }).then(() => {
+      })
+      .then(() => {
         authFactory
           .getUser()
           .then((e) => {
@@ -107,15 +125,18 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
               if (key === postkey) {
                 let obj = $scope.all[key];
                 for (k1 in obj.upvotes) {
+                  // console.log('k1', obj.upvotes[k1], 'uid', uid)
                   // if user upvoted then do nothing
                   if (uid === obj.upvotes[k1]) {
+                    console.log('this guy already upvoted')
                     return voted = true;
                   }
                 }
                 for (k2 in obj.downvotes) {
-                  // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
+                  console.log('k2', obj.downvotes[k2], 'uid', uid)
+                    // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
                   if (uid === obj.downvotes[k2]) { // upvoters uid will be obj.upvotes[k]
-                    // console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
+                    console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
                     // delete downvote
                     redditFactory.removeDownvotes(key, k2);
                     // add upvote
@@ -139,19 +160,21 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
               }
             }
           })
-      });
-  }
+      })
+  };
+
 
   $scope.downVote = (postkey) => {
-    // get current user
+    console.log('postKey', postkey)
     let voted = false;
     let uid;
     redditFactory.getPosts()
       .then((allPosts) => {
-        $scope.all = allPosts.data
+        $scope.all = allPosts
           // console.log("posts", $scope.all)
       })
       .then(() => {
+
         authFactory
           .getUser()
           .then((e) => {
@@ -167,13 +190,14 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
                 for (k1 in obj.downvotes) {
                   // if user downvoted then do nothing
                   if (uid === obj.downvotes[k1]) {
+                    console.log('this guy already downvoted')
                     return voted = true;
                   }
                 }
                 for (k2 in obj.upvotes) {
                   // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
                   if (uid === obj.upvotes[k2]) { // upvoters uid will be obj.upvotes[k]
-                    // console.log('delete the upvote and add a downvote, postkey & key match, k2 dv', postkey, key, k2);
+                    console.log('delete the upvote and add a downvote, postkey & key match, k2 dv', postkey, key, k2);
                     // delete upvote
                     redditFactory.removeUpvotes(key, k2);
                     // add downvote
@@ -198,7 +222,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
               }
             }
           })
-      });
+      })
   }
 
 
@@ -258,10 +282,8 @@ app.controller('logoutCtrl', function($scope, $location, authFactory) {
 app.controller('postCtrl', function($scope, $location, authFactory, redditFactory) {
   // use postid to name file
   $scope.newPost = () => {
-    // let newPost = {};
-
-    // Get user info first, then make a new post passing in the name
-
+    // get user
+    // new post
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
         let userId = user.data.name
@@ -271,6 +293,7 @@ app.controller('postCtrl', function($scope, $location, authFactory, redditFactor
         console.log("much success")
       })
       .catch(() => $location.path('/login'))
+    // put response.data.name (postkey) onto the post
   }
 
   $('#postModal').modal({
@@ -337,10 +360,7 @@ app.factory('authFactory', ($q) => {
           if (user) {
             resolve(user);
           } else {
-            reject(() => {
-              var $toastContent = $('<span>Not Logged In</span>');
-              Materialize.toast($toastContent, 5000);
-              });
+            reject("Not logged in");
           }
         }); //end const unsubscribe
       }); //end return getUser
@@ -356,15 +376,18 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
   return {
     newPost(link, title) {
       console.log('NEW POST')
-      return authFactory.getUser().then(user => {
-        console.log("addingpost")
-          // $scope.title, $scope.artist, $scope.album, $scope.length
-        return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
-          uid: user.uid,
-          title: title,
-          url: link,
+      return authFactory.getUser()
+        .then((user) => {
+          return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
+            uid: user.uid,
+            title: title,
+            url: link,
+          })
         })
-      })
+        // .then((response) => {
+        //   let x = response.data.name;
+        //   copyKey(x, x)
+        // })
     },
     handleFiles(userId) {
       let storageRef = firebase.storage().ref();
@@ -376,24 +399,17 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
           $http.patch(`https://reddit-steve.firebaseio.com/posts/${userId}.json`, {
             image: snapshot.downloadURL
           })
-
           console.log("downloadurl", snapshot.downloadURL)
         }).catch(console.error);
     },
-    // finalScore(all){
-    //   for(obj in all)
-
-    //   let u = Object.keys(obj.upvotes).length
-    //   let d = Object.keys(obj.downvotes).length
-    //   return () =>{
-    //   let  s = (all.upvotes - all.downvotes)
-    //   console.log("score?", s)
-    //   }
 
 
-    // },
+    copyKey(key, data) {
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/postKey.json`, `"${data}"`)
+    },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
+        .then(res => res.data)
     },
     getUsers() {
       return $http.get(`https://reddit-steve.firebaseio.com/users.json`)

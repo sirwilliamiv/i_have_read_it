@@ -3,15 +3,18 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
   return {
     newPost(link, title) {
       console.log('NEW POST')
-      return authFactory.getUser().then(user => {
-        console.log("addingpost")
-          // $scope.title, $scope.artist, $scope.album, $scope.length
-        return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
-          uid: user.uid,
-          title: title,
-          url: link,
+      return authFactory.getUser()
+        .then((user) => {
+          return $http.post(`https://reddit-steve.firebaseio.com/posts.json`, {
+            uid: user.uid,
+            title: title,
+            url: link,
+          })
         })
-      })
+        // .then((response) => {
+        //   let x = response.data.name;
+        //   copyKey(x, x)
+        // })
     },
     handleFiles(userId) {
       let storageRef = firebase.storage().ref();
@@ -23,14 +26,14 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
           $http.patch(`https://reddit-steve.firebaseio.com/posts/${userId}.json`, {
             image: snapshot.downloadURL
           })
-
           console.log("downloadurl", snapshot.downloadURL)
         }).catch(console.error);
     },
 
 
-
-    // },
+    copyKey(key, data) {
+      $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/postKey.json`, `"${data}"`)
+    },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
         .then(res => res.data)

@@ -2,35 +2,30 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
 
   $scope.all = posts
 
-  console.log(posts)
-
+  // create score
   for (obj in $scope.all) {
     let u;
     let d;
-    console.log($scope.all[obj].downvotes)
     if ($scope.all[obj].upvotes === undefined) {
-      u = 0
-      console.log("u", u)
+      u = 0;
     } else {
-      u = Object.keys($scope.all[obj].upvotes).length
-      console.log("u", u)
+      u = Object.keys($scope.all[obj].upvotes).length;
     }
     if ($scope.all[obj].downvotes === undefined) {
-      d = 0
-      console.log("d", d)
+      d = 0;
     } else {
-
-      d = Object.keys($scope.all[obj].downvotes).length
-      console.log("d", d)
+      d = Object.keys($scope.all[obj].downvotes).length;
     }
-
     let score = u - d
-    console.log("score", score)
-
     let key = obj
-
     redditFactory.updateScore(key, score)
+  }
 
+  // copy post key into post
+  for (key in $scope.all) {
+    if ($scope.all[key].postKey === undefined) {
+      redditFactory.copyKey(key, key);
+    }
   }
 
   // get users then loop through post and if they match then patch the username to the post
@@ -54,21 +49,18 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       }
     })
 
-// function pageLoad() {
-
-  // }
-
-
   // onclick post the result to firebase
   $scope.upVote = (postkey) => {
-    // get current user
+    console.log('postKey', postkey)
+      // get current user
     let voted = false;
     let uid;
     redditFactory.getPosts()
       .then((allPosts) => {
-        $scope.all = allPosts.data
+        $scope.all = allPosts
           // console.log("posts", $scope.all)
-      }).then(() => {
+      })
+      .then(() => {
         authFactory
           .getUser()
           .then((e) => {
@@ -82,15 +74,18 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
               if (key === postkey) {
                 let obj = $scope.all[key];
                 for (k1 in obj.upvotes) {
+                  // console.log('k1', obj.upvotes[k1], 'uid', uid)
                   // if user upvoted then do nothing
                   if (uid === obj.upvotes[k1]) {
+                    console.log('this guy already upvoted')
                     return voted = true;
                   }
                 }
                 for (k2 in obj.downvotes) {
-                  // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
+                  console.log('k2', obj.downvotes[k2], 'uid', uid)
+                    // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
                   if (uid === obj.downvotes[k2]) { // upvoters uid will be obj.upvotes[k]
-                    // console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
+                    console.log('delete the downvote and add an upvote, postkey & key match, k2 dv', postkey, key, k2);
                     // delete downvote
                     redditFactory.removeDownvotes(key, k2);
                     // add upvote
@@ -114,19 +109,21 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
               }
             }
           })
-      });
-  }
+      })
+  };
+
 
   $scope.downVote = (postkey) => {
-    // get current user
+    console.log('postKey', postkey)
     let voted = false;
     let uid;
     redditFactory.getPosts()
       .then((allPosts) => {
-        $scope.all = allPosts.data
+        $scope.all = allPosts
           // console.log("posts", $scope.all)
       })
       .then(() => {
+
         authFactory
           .getUser()
           .then((e) => {
@@ -142,13 +139,14 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
                 for (k1 in obj.downvotes) {
                   // if user downvoted then do nothing
                   if (uid === obj.downvotes[k1]) {
+                    console.log('this guy already downvoted')
                     return voted = true;
                   }
                 }
                 for (k2 in obj.upvotes) {
                   // if the user wants to change their downvote to an upvote then delete the downvote and add an upvote
                   if (uid === obj.upvotes[k2]) { // upvoters uid will be obj.upvotes[k]
-                    // console.log('delete the upvote and add a downvote, postkey & key match, k2 dv', postkey, key, k2);
+                    console.log('delete the upvote and add a downvote, postkey & key match, k2 dv', postkey, key, k2);
                     // delete upvote
                     redditFactory.removeUpvotes(key, k2);
                     // add downvote
@@ -173,7 +171,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
               }
             }
           })
-      });
+      })
   }
 
 
