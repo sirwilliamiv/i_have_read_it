@@ -1,1 +1,1 @@
-const app = angular.module('iHaveReadIt', ['ngRoute','angular-toArrayFilter']);
+const app = angular.module('iHaveReadIt', ['ngRoute', 'angular-toArrayFilter']);

@@ -6,13 +6,10 @@ app.factory('authFactory', ($q) => {
         // console.log(data.uid);
         // return UID = data.uid;
       }));
-    }, //end login
-
+    },
     createUser(email, pass, first, last) {
-      console.log("email", email);
       return $q.resolve(firebase.auth().createUserWithEmailAndPassword(email, pass));
-
-    }, //end createUser
+    },
     getUser() {
       return $q((resolve, reject) => {
         const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -25,7 +22,6 @@ app.factory('authFactory', ($q) => {
               Materialize.toast($toastContent, 5000);
               });
           }
-
         }); //end const unsubscribe
       }); //end return getUser
     }, //end getUser
