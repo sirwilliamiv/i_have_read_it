@@ -5,12 +5,11 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       // console.log("posts", $scope.all);
     });
 
-  redditFactory.getPosts()
-    .then((allPosts) => {
-      $scope.all = allPosts.data
-      redditFactory.finalScore($scope.all)
-
-    })
+  // redditFactory.getPosts()
+  //   .then((allPosts) => {
+  //     $scope.all = allPosts.data
+  //     redditFactory.finalScore($scope.all)
+  //   })
 
   // onclick post the result to firebase
   $scope.upVote = (postkey) => {
@@ -71,7 +70,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
   $scope.downVote = (postkey) => {
-        // get current user
+    // get current user
     let voted = false;
     let uid;
     redditFactory.getPosts()
@@ -130,10 +129,6 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
 
-
-
-
-
   //materialize Modals below
   $('#loginButton').click(() => {
     $('#loginModal').modal('open')
@@ -143,12 +138,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     $('#registerModal').modal('open')
   })
 
-
   $('#newPost').click(() => {
     $('#postModal').modal('open')
   })
-
-
-
-
 })

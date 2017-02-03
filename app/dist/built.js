@@ -1,4 +1,4 @@
-const app = angular.module('iHaveReadIt', ['ngRoute']);
+const app = angular.module('iHaveReadIt', ['ngRoute', 'angular-toArrayFilter']);
 ;
 app.config(($routeProvider, $locationProvider) => {
   //firebaseAuth here
@@ -56,11 +56,11 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       // console.log("posts", $scope.all);
     });
 
-  redditFactory.getPosts()
-    .then((allPosts) => {
-      $scope.all = allPosts.data
-        // console.log("posts", $scope.all)
-    })
+  // redditFactory.getPosts()
+  //   .then((allPosts) => {
+  //     $scope.all = allPosts.data
+  //     redditFactory.finalScore($scope.all)
+  //   })
 
   // onclick post the result to firebase
   $scope.upVote = (postkey) => {
@@ -121,7 +121,7 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
   $scope.downVote = (postkey) => {
-        // get current user
+    // get current user
     let voted = false;
     let uid;
     redditFactory.getPosts()
@@ -180,10 +180,6 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
   }
 
 
-
-
-
-
   //materialize Modals below
   $('#loginButton').click(() => {
     $('#loginModal').modal('open')
@@ -193,20 +189,14 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
     $('#registerModal').modal('open')
   })
 
-
   $('#newPost').click(() => {
     $('#postModal').modal('open')
   })
-
-
-
-
 })
 ;
 app.controller('loginCtrl', function($scope, $location, authFactory) {
 
   $scope.userLogin = () => {
-
     authFactory.login($scope.user_email, $scope.user_password)
       .then(() => {
         console.log("woohoo")
@@ -214,20 +204,19 @@ app.controller('loginCtrl', function($scope, $location, authFactory) {
       });
   };
 
-$('#loginModal').modal('open');
-      //login
+  $('#loginModal').modal('open');
+  //login
   $('#loginModal').modal({
-      dismissible: false, // Modal can be dismissed by clicking outside of the modal
-      opacity: 0.3, // Opacity of modal background
-      inDuration: 700, // Transition in duration
-      outDuration: 700, // Transition out duration
-      startingTop: '0%', // Starting top style attribute
-      endingTop: '20%', // Ending top style attribute
-      ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-
-          console.log(modal, trigger);
-      },
-      complete: function() { console.log('Closed'); } // Callback for Modal close
+    dismissible: false, // Modal can be dismissed by clicking outside of the modal
+    opacity: 0.3, // Opacity of modal background
+    inDuration: 700, // Transition in duration
+    outDuration: 700, // Transition out duration
+    startingTop: '0%', // Starting top style attribute
+    endingTop: '20%', // Ending top style attribute
+    ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+      console.log(modal, trigger);
+    },
+    complete: function() { console.log('Closed'); } // Callback for Modal close
   });
 });
 ;
@@ -244,21 +233,19 @@ app.controller('logoutCtrl', function($scope, $location, authFactory) {
 
 })
 ;
-app.controller('postCtrl', function($scope, $location, redditFactory) {
-  console.log('postCtrl!')
-    // use postid to name file
+app.controller('postCtrl', function($scope, $location, authFactory, redditFactory) {
+  // use postid to name file
   $scope.newPost = () => {
+    // let newPost = {};
 
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
         let userId = user.data.name
-         redditFactory.handleFiles(userId)
+        redditFactory.handleFiles(userId)
         console.log("much success")
       })
       .catch(() => $location.path('/login'))
-
   }
-
 
   $('#postModal').modal({
     dismissible: true, // Modal can be dismissed by clicking outside of the modal
@@ -269,31 +256,36 @@ app.controller('postCtrl', function($scope, $location, redditFactory) {
     endingTop: '20%', // Ending top style attribute
     ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
 
-      console.log(modal, trigger);
+      // console.log(modal, trigger);
     },
-    complete: function() { console.log('Closed'); } // Callback for Modal close
+    // complete: function() { console.log('Closed'); } // Callback for Modal close
   });
 })
 ;
-app.controller('registerCtrl', function($scope, $location, authFactory) {
-
+app.controller('registerCtrl', function($scope, $location, authFactory, redditFactory) {
 
   $scope.createUser = () => {
-    console.log($scope.user_email)
-    authFactory.createUser($scope.user_email, $scope.user_password,$scope.firstName, $scope.lastName)
-      .then(() => console.log("success"));
+    let newuid;
+    authFactory.createUser($scope.user_email, $scope.user_password)
+      .then((response) => {
+        newuid = response.uid;
+        console.log(newuid)
+      })
+      .then(() => {
+        let newUser = {"uid": newuid, "firstName": $scope.firstName, "lastName": $scope.lastName, "email": $scope.user_email};
+        redditFactory.addUser(newUser);
+      })
   };
 
-    //register
-    $('#registerModal').modal({
-        dismissible: true, // Modal can be dismissed by clicking outside of the modal
-        opacity: .3, // Opacity of modal background
-        inDuration: 750, // Transition in duration
-        outDuration: 700, // Transition out duration
-        startingTop: '100%', // Starting top style attribute
-        endingTop: '20%', // Ending top style attribute
-        ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-
+  //register
+  $('#registerModal').modal({
+    dismissible: true, // Modal can be dismissed by clicking outside of the modal
+    opacity: 0.3, // Opacity of modal background
+    inDuration: 750, // Transition in duration
+    outDuration: 700, // Transition out duration
+    startingTop: '100%', // Starting top style attribute
+    endingTop: '20%', // Ending top style attribute
+    ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
       console.log(modal, trigger);
     },
     complete: function() { console.log('Closed'); } // Callback for Modal close
@@ -308,13 +300,10 @@ app.factory('authFactory', ($q) => {
         // console.log(data.uid);
         // return UID = data.uid;
       }));
-    }, //end login
-
+    },
     createUser(email, pass, first, last) {
-      console.log("email", email);
       return $q.resolve(firebase.auth().createUserWithEmailAndPassword(email, pass));
-
-    }, //end createUser
+    },
     getUser() {
       return $q((resolve, reject) => {
         const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -327,7 +316,6 @@ app.factory('authFactory', ($q) => {
               Materialize.toast($toastContent, 5000);
               });
           }
-
         }); //end const unsubscribe
       }); //end return getUser
     }, //end getUser
@@ -349,7 +337,6 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
           uid: user.uid,
           title: title,
           url: link,
-
         })
       })
     },
@@ -367,6 +354,18 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
           console.log("downloadurl", snapshot.downloadURL)
         }).catch(console.error);
     },
+    // finalScore(all){
+    //   for(obj in all)
+
+    //   let u = Object.keys(obj.upvotes).length
+    //   let d = Object.keys(obj.downvotes).length
+    //   return () =>{
+    //   let  s = (all.upvotes - all.downvotes)
+    //   console.log("score?", s)
+    //   }
+
+
+    // },
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
     },
@@ -384,6 +383,9 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     },
     removeUpvotes(key, k2) {
       $http.delete(`https://reddit-steve.firebaseio.com/posts/${key}/upvotes/${k2}.json`)
+    },
+    addUser(newUser) {
+      $http.post(`https://reddit-steve.firebaseio.com/users.json`, newUser)
     }
   }
 });
