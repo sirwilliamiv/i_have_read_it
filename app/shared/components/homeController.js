@@ -5,6 +5,28 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       // console.log("posts", $scope.all);
     });
 
+  // get users then loop through post and if they match then patch the username to the post
+  redditFactory.getUsers()
+    .then((allUsers) => {
+      $scope.users = allUsers.data;
+    }).then(() => {
+      for (key in $scope.all) {
+        for (k in $scope.users) {
+          // see if post has a first name already. if so do nothing
+          if ($scope.all[key].firstName === undefined) {
+            if ($scope.all[key].uid === $scope.users[k].uid) {
+              console.log("Tis a match!", key)
+                // if match then post the firstName, lastName to the post
+              let postFLName = { "firstName": $scope.users[k].firstName, "lastName": $scope.users[k].lastName };
+              // patch the users first and last name to the database
+              redditFactory.patchName(key, postFLName);
+            }
+          }
+        }
+      }
+    })
+
+
   // redditFactory.getPosts()
   //   .then((allPosts) => {
   //     $scope.all = allPosts.data

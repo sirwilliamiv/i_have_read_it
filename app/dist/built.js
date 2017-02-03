@@ -56,6 +56,28 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       // console.log("posts", $scope.all);
     });
 
+  // get users then loop through post and if they match then patch the username to the post
+  redditFactory.getUsers()
+    .then((allUsers) => {
+      $scope.users = allUsers.data;
+    }).then(() => {
+      for (key in $scope.all) {
+        for (k in $scope.users) {
+          // see if post has a first name already. if so do nothing
+          if ($scope.all[key].firstName === undefined) {
+            if ($scope.all[key].uid === $scope.users[k].uid) {
+              console.log("Tis a match!", key)
+                // if match then post the firstName, lastName to the post
+              let postFLName = { "firstName": $scope.users[k].firstName, "lastName": $scope.users[k].lastName };
+              // patch the users first and last name to the database
+              redditFactory.patchName(key, postFLName);
+            }
+          }
+        }
+      }
+    })
+
+
   // redditFactory.getPosts()
   //   .then((allPosts) => {
   //     $scope.all = allPosts.data
@@ -238,10 +260,14 @@ app.controller('postCtrl', function($scope, $location, authFactory, redditFactor
   $scope.newPost = () => {
     // let newPost = {};
 
+    // Get user info first, then make a new post passing in the name
+
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
         let userId = user.data.name
-        redditFactory.handleFiles(userId)
+        let toPost = {"uid": userId, "first": $scope.firstName, "last": $scope.lastName}
+        console.log('toPost', toPost);
+        redditFactory.handleFiles(userId);
         console.log("much success")
       })
       .catch(() => $location.path('/login'))
@@ -269,7 +295,7 @@ app.controller('registerCtrl', function($scope, $location, authFactory, redditFa
     authFactory.createUser($scope.user_email, $scope.user_password)
       .then((response) => {
         newuid = response.uid;
-        console.log(newuid)
+        // console.log(newuid)
       })
       .then(() => {
         let newUser = {"uid": newuid, "firstName": $scope.firstName, "lastName": $scope.lastName, "email": $scope.user_email};
@@ -369,6 +395,9 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
     },
+    getUsers() {
+      return $http.get(`https://reddit-steve.firebaseio.com/users.json`)
+    },
     updateScore(key, data) {
       $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/score.json`, data)
     },
@@ -386,6 +415,9 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     },
     addUser(newUser) {
       $http.post(`https://reddit-steve.firebaseio.com/users.json`, newUser)
+    },
+    patchName(key, userName) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, userName)
     }
   }
 });
