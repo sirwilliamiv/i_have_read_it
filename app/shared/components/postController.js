@@ -1,10 +1,8 @@
 app.controller('postCtrl', function($scope, $location, authFactory, redditFactory) {
   // use postid to name file
   $scope.newPost = () => {
-    // let newPost = {};
-
-    // Get user info first, then make a new post passing in the name
-
+    // get user
+    // new post
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
         let userId = user.data.name
@@ -14,6 +12,7 @@ app.controller('postCtrl', function($scope, $location, authFactory, redditFactor
         console.log("much success")
       })
       .catch(() => $location.path('/login'))
+    // put response.data.name (postkey) onto the post
   }
 
   $('#postModal').modal({
