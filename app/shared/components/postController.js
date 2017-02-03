@@ -3,10 +3,14 @@ app.controller('postCtrl', function($scope, $location, authFactory, redditFactor
   $scope.newPost = () => {
     // let newPost = {};
 
+    // Get user info first, then make a new post passing in the name
+
     redditFactory.newPost($scope.Link, $scope.Title)
       .then((user) => {
         let userId = user.data.name
-        redditFactory.handleFiles(userId)
+        let toPost = {"uid": userId, "first": $scope.firstName, "last": $scope.lastName}
+        console.log('toPost', toPost);
+        redditFactory.handleFiles(userId);
         console.log("much success")
       })
       .catch(() => $location.path('/login'))

@@ -42,6 +42,9 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     getPosts() {
       return $http.get(`https://reddit-steve.firebaseio.com/posts.json`)
     },
+    getUsers() {
+      return $http.get(`https://reddit-steve.firebaseio.com/users.json`)
+    },
     updateScore(key, data) {
       $http.put(`https://reddit-steve.firebaseio.com/posts/${key}/score.json`, data)
     },
@@ -59,6 +62,9 @@ app.factory('redditFactory', ($q, authFactory, $http) => {
     },
     addUser(newUser) {
       $http.post(`https://reddit-steve.firebaseio.com/users.json`, newUser)
+    },
+    patchName(key, userName) {
+      $http.patch(`https://reddit-steve.firebaseio.com/posts/${key}.json`, userName)
     }
   }
 });
