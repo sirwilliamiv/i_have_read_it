@@ -1,9 +1,37 @@
-app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory) {
-  redditFactory.getPosts()
-    .then((allPosts) => {
-      $scope.all = allPosts.data;
-      // console.log("posts", $scope.all);
-    });
+app.controller('homeCtrl', function($scope, $location, authFactory, redditFactory, posts, user) {
+
+  $scope.all = posts
+
+  console.log(posts)
+
+  for (obj in $scope.all) {
+    let u;
+    let d;
+    console.log($scope.all[obj].downvotes)
+    if ($scope.all[obj].upvotes === undefined) {
+      u = 0
+      console.log("u", u)
+    } else {
+      u = Object.keys($scope.all[obj].upvotes).length
+      console.log("u", u)
+    }
+    if ($scope.all[obj].downvotes === undefined) {
+      d = 0
+      console.log("d", d)
+    } else {
+
+      d = Object.keys($scope.all[obj].downvotes).length
+      console.log("d", d)
+    }
+
+    let score = u - d
+    console.log("score", score)
+
+    let key = obj
+
+    redditFactory.updateScore(key, score)
+
+  }
 
   // get users then loop through post and if they match then patch the username to the post
   redditFactory.getUsers()
@@ -26,12 +54,10 @@ app.controller('homeCtrl', function($scope, $location, authFactory, redditFactor
       }
     })
 
+// function pageLoad() {
 
-  // redditFactory.getPosts()
-  //   .then((allPosts) => {
-  //     $scope.all = allPosts.data
-  //     redditFactory.finalScore($scope.all)
-  //   })
+  // }
+
 
   // onclick post the result to firebase
   $scope.upVote = (postkey) => {

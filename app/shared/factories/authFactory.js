@@ -17,10 +17,7 @@ app.factory('authFactory', ($q) => {
           if (user) {
             resolve(user);
           } else {
-            reject(() => {
-              var $toastContent = $('<span>Not Logged In</span>');
-              Materialize.toast($toastContent, 5000);
-              });
+            reject("Not logged in");
           }
         }); //end const unsubscribe
       }); //end return getUser

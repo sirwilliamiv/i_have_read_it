@@ -15,7 +15,7 @@ app.config(($routeProvider, $locationProvider) => {
       controller: 'homeCtrl',
       templateUrl: '/shared/components/homeView.html',
       resolve: {
-          showPosts (redditFactory, $route) {
+          posts (redditFactory) {
             return redditFactory.getPosts()
           },
           user (authFactory, $location) {
