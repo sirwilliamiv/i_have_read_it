@@ -1,10 +1,29 @@
 <div class="container">
-  <button ng-click="logout()" class="waves-effect grey btn-large">Logout</button>
-  <button id="loginButton" data-target="loginModal" class="waves-effect grey btn-large"> LOGIN</button>
+  <button ng-controller="logoutCtrl" ng-click="logout()" class="waves-effect grey btn-large">Logout</button>
+  <button id="loginButton" href="/shared/components/loginView.html" data-target="loginModal" class="waves-effect grey btn-large"> LOGIN</button>
   <button class="registerButton waves-effect grey btn-large" data-target="registerModal"> Register</button>
   <button id="newPost" class="waves-effect grey btn-large" data-target="postModal"> New Post</button>
+  <br>
+  <br>
+
+  <!-- ng-repeat over posts -->
+  <div class="row" ng-repeat="(key, value) in all | toArray : false | orderBy: '-score'">
+    <div class="col s1 center">
+      <i ng-click="upVote(value.postKey)" class="material-icons upvote">thumb_up</i>
+      <p class="upvoteRating">{{value.score}}</p>
+      <i ng-click="downVote(value.postKey)" class="material-icons downvote">thumb_down</i>
+    </div>
+    <div class="col s2">
+      <img class="postImage" ng-src="{{value.image}}">
+    </div>
+    <div class="col s9">
+      <a href="{{value.url}}"><h5>{{value.title}}</h5></a>
+      <p class="light">{{value.firstName}} {{value.lastName}}</p>
+    </div>
+  </div>
+
   <!-- Login Modal  -->
-  <div id="loginModal" class="modal">
+  <div id="loginModal" ng-controller="loginCtrl" class="modal">
     <div class="modal-content">
       <h4>Login</h4>
       <form>
@@ -13,13 +32,13 @@
         <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" ng-click="userLogin()" value="LOGIN">
       </form>
       <p>New?
-        <button class="registerButton" data-target="registerModal" class="modal-action modal-close waves-effect waves-white btn-flat">Register</button>
+        <button data-target="registerModal" class="modal-action modal-close waves-effect waves-white btn-flat registerButton">Register</button>
       </p>
     </div>
   </div>
   <!-- End Login Modal  -->
   <!-- Register Modal  -->
-  <div id="registerModal" class="modal">
+  <div id="registerModal" ng-controller="registerCtrl" class="modal">
     <div class="modal-content">
       <h4>Register</h4>
       <form>
@@ -32,15 +51,15 @@
     </div>
   </div>
   <!-- End Register Modal  -->
-  <!-- AddSong Modal -->
-  <div id="postModal" class="modal">
+  <!-- AddPost Modal -->
+  <div id="postModal" ng-controller="postCtrl" class="modal">
     <div class="modal-content">
       <h4>New Post</h4>
-      <form>
-        <input type="text" ng-model="Photo" placeholder="Title">
-        <input type="text" ng-model="Title" placeholder="Artist">
-        <input type="file">
-        <input type="submit" ng-click="" class="modal-action modal-close waves-effect waves-green btn-flat" value="Save Song">
+      <form ng-submit="newPost()">
+        <input type="text" ng-model="Link" placeholder="Link from to Web">
+        <input type="text" ng-model="Title" placeholder="Title">
+        <input type="file" id="fileUpload">
+        <input type="submit" class="modal-action modal-close waves-effect waves-green btn-flat" value="Post">
       </form>
     </div>
     <!-- End new Post Modal  -->

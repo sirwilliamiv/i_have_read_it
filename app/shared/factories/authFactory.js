@@ -1,33 +1,29 @@
-app.factory('authFactory', ($q)=> {
+app.factory('authFactory', ($q) => {
   return {
     login(email, pass) {
-      console.log("auth", email)
-      return $q.resolve(firebase.auth().signInWithEmailAndPassword(email,pass).then((data) =>{
-        console.log(data.uid)
-        return UID = data.uid
-      }))
-    }, //end login
-
-    createUser(email,pass) {
-      console.log("email", email)
-      return $q.resolve(firebase.auth().createUserWithEmailAndPassword(email, pass))
-
-    }, //end createUser
-    getUser () {
+      console.log("auth", email);
+      return $q.resolve(firebase.auth().signInWithEmailAndPassword(email, pass).then((data) => {
+        // console.log(data.uid);
+        // return UID = data.uid;
+      }));
+    },
+    createUser(email, pass, first, last) {
+      return $q.resolve(firebase.auth().createUserWithEmailAndPassword(email, pass));
+    },
+    getUser() {
       return $q((resolve, reject) => {
         const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-          unsubscribe()
+          unsubscribe();
           if (user) {
-            resolve(user)
+            resolve(user);
           } else {
-            reject()
+            reject("Not logged in");
           }
-
-        }) //end const unsubscribe
-      }) //end return getUser
+        }); //end const unsubscribe
+      }); //end return getUser
     }, //end getUser
     logout() {
-      return $q.resolve(firebase.auth().signOut())
+      return $q.resolve(firebase.auth().signOut());
     }
-  } //end of return object
-}) //end factory
+  }; //end of return object
+}); //end factory
